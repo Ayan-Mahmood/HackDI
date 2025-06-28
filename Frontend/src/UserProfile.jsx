@@ -210,12 +210,12 @@ const UserProfile = () => {
                     <input
                       type="radio"
                       name="goalType"
-                      value="ayat"
-                      checked={formData.goalType === 'ayat'}
+                      value="ayats"
+                      checked={formData.goalType === 'ayats'}
                       onChange={handleInputChange}
                     />
                     <span className="radio-checkmark"></span>
-                    Memorize Ayat
+                    Read Ayats
                   </label>
                 </div>
               </div>
@@ -230,11 +230,11 @@ const UserProfile = () => {
                     value={formData.dailyGoal}
                     onChange={handleInputChange}
                     min="1"
-                    max="10"
+                    max={formData.goalType === 'pages' ? '10' : '50'}
                     className="form-input"
                   />
                   <span className="goal-unit">
-                    {formData.goalType === 'pages' ? 'pages' : 'ayat'} per day
+                    {formData.goalType === 'pages' ? 'pages' : 'ayats'} per day
                   </span>
                 </div>
               </div>
@@ -298,16 +298,18 @@ const UserProfile = () => {
               <div className="stat-card">
                 <div className="stat-icon">📖</div>
                 <div className="stat-content">
-                  <h3>Total Pages Read</h3>
-                  <p className="stat-value">{userData?.totalPagesRead || 0}</p>
+                  <h3>Total Verses Completed</h3>
+                  <p className="stat-value">{userData?.totalVersesCompleted || 0}</p>
                 </div>
               </div>
 
               <div className="stat-card">
-                <div className="stat-icon">📝</div>
+                <div className="stat-icon">🎯</div>
                 <div className="stat-content">
-                  <h3>Total Ayat Memorized</h3>
-                  <p className="stat-value">{userData?.totalAyatMemorized || 0}</p>
+                  <h3>Current Goal</h3>
+                  <p className="stat-value">
+                    {userData?.dailyGoal || 1} {userData?.goalType === 'pages' ? 'page' : 'ayats'} per day
+                  </p>
                 </div>
               </div>
             </div>

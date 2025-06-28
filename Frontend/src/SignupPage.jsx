@@ -58,23 +58,24 @@ const SignupPage = () => {
       const user = userCredential.user;
 
       // Create user profile in Firestore
-      await setDoc(doc(db, "users", user.uid), {
+      const userProfile = {
+        uid: user.uid,
         email: formData.email,
         username: formData.username,
         dailyGoal: parseInt(formData.dailyGoal),
         goalType: formData.goalType,
         preferredLanguage: formData.preferredLanguage,
         timezone: formData.timezone,
-        streak: 0,
+        createdAt: new Date().toISOString(),
+        // Initialize progress tracking
         currentStreak: 0,
-        longestStreak: 0,
-        totalPagesRead: 0,
-        totalAyatMemorized: 0,
-        joinDate: new Date().toISOString(),
-        lastCompletedDate: null,
-        isFirstTimeUser: true,
-        profileCompleted: true
-      });
+        totalVersesCompleted: 0,
+        currentSurah: 1,
+        currentVerse: 1,
+        lastCompletedDate: null
+      };
+
+      await setDoc(doc(db, "users", user.uid), userProfile);
 
       console.log("Signup successful!", user);
       navigate('/dashboard');

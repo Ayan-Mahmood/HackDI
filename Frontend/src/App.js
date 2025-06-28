@@ -2,8 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
-import UserProfile from './UserProfile';
 import Dashboard from './Dashboard';
+import UserProfile from './UserProfile';
+import DailyLesson from './DailyLesson';
+import QuranViewer from './QuranViewer';
 import './App.css';
 
 function App() {
@@ -13,8 +15,10 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/profile" element={<UserProfile />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/daily-lesson" element={<DailyLesson />} />
+          <Route path="/quran-viewer" element={<QuranViewer />} />
           <Route path="/" element={<Navigate to="/login" replace />} />
           {/* Add more routes here as you build your app */}
         </Routes>
