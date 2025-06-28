@@ -1,19 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { auth } from './firebase-config.js';
+import { auth, db } from './firebase-config.js';
 import { signOut } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+        
+        // Fetch user profile data from Firestore
+        try {
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userDoc = await getDoc(userDocRef);
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUsername(userData.username || currentUser.email);
+          } else {
+            setUsername(currentUser.email);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          setUsername(currentUser.email);
+        }
       } else {
         navigate('/login');
       }
@@ -48,7 +66,7 @@ const Dashboard = () => {
       <div className="dashboard-header">
         <div className="header-content">
           <h1>Welcome to Quran Quest</h1>
-          <p>Your daily Quran learning journey starts here</p>
+          <p>Your daily Quran journey starts here</p>
         </div>
         <div className="header-actions">
           <Link to="/profile" className="profile-button">
@@ -62,7 +80,7 @@ const Dashboard = () => {
 
       <div className="dashboard-content">
         <div className="welcome-card">
-          <h2>Welcome back, {user?.username}!</h2>
+          <h2>Welcome back, {username}!</h2>
           <p>This is your learning dashboard. More features coming soon!</p>
         </div>
 
