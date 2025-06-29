@@ -1,0 +1,332 @@
+.friends-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #39836e 0%, #24664a 100%);
+  padding: 40px 0 60px 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.friends-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  background: rgba(26, 34, 51, 0.95);
+  padding: 24px 32px;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+
+.friends-header h1 {
+  color: #2ecc71;
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.back-button {
+  background: #2ecc71;
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+}
+
+.back-button:hover {
+  background: #27ae60;
+}
+
+.friends-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 32px;
+  background: #1a2233;
+  border-radius: 16px;
+  padding: 10px 0;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.tab-button {
+  background: transparent;
+  color: #fff;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab-button.active {
+  background: #2ecc71;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+}
+
+.tab-button:hover:not(.active) {
+  background: #28344a;
+  color: #2ecc71;
+}
+
+.add-friend-section, .friends-content {
+  background: #1a2233;
+  padding: 32px 32px 24px 32px;
+  border-radius: 24px;
+  margin-bottom: 30px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+
+.add-friend-section h3, .friends-content h3 {
+  color: #2ecc71;
+  margin: 0 0 20px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.search-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: #232e41;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  background: #28344a;
+  box-shadow: 0 0 0 2px #2ecc71;
+}
+
+.search-button {
+  background: #2ecc71;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.search-button:hover {
+  background: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+}
+
+.search-message {
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.search-message.error {
+  background: rgba(244, 67, 54, 0.2);
+  color: #ffebee;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.search-message.success {
+  background: rgba(76, 175, 80, 0.2);
+  color: #e8f5e8;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.search-result {
+  margin-top: 20px;
+}
+
+.user-card {
+  background: #232e41;
+  padding: 20px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+}
+
+.user-info h4 {
+  color: #fff;
+  margin: 0 0 5px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.user-info p {
+  color: #a0aec0;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.add-friend-button {
+  background: #2ecc71;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.add-friend-button:hover {
+  background: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+}
+
+.friends-list, .friend-requests-list {
+  margin-top: 10px;
+}
+
+.friend-card, .friend-request-card {
+  background: #232e41;
+  padding: 20px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+  transition: all 0.3s ease;
+}
+
+.friend-card:hover, .friend-request-card:hover {
+  background: #28344a;
+  transform: translateY(-2px);
+}
+
+.friend-info h4, .request-info h4 {
+  color: #fff;
+  margin: 0 0 5px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.friend-info p, .request-info p {
+  color: #a0aec0;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.remove-friend-button, .accept-button, .decline-button {
+  background: #2ecc71;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-left: 8px;
+}
+
+.remove-friend-button:hover, .accept-button:hover {
+  background: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+}
+
+.decline-button {
+  background: #f44336;
+}
+
+.decline-button:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(244, 67, 54, 0.3);
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: white;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .friends-container {
+    padding: 15px;
+  }
+  
+  .friends-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .friends-header h1 {
+    font-size: 2rem;
+  }
+  
+  .friends-tabs {
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+  
+  .search-container {
+    flex-direction: column;
+  }
+  
+  .user-card,
+  .friend-card,
+  .friend-request-card {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .request-actions {
+    width: 100%;
+    justify-content: center;
+  }
+} 

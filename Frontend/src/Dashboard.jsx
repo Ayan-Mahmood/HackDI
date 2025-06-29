@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [userProgress, setUserProgress] = useState(null);
   const [surahs, setSurahs] = useState([]);
+  const [friendRequestsCount, setFriendRequestsCount] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -225,6 +226,12 @@ const Dashboard = () => {
           <p>Your daily Quran journey starts here</p>
         </div>
         <div className="header-actions">
+          <Link to="/friends" className="friends-button">
+            Friends
+            {friendRequestsCount > 0 && (
+              <span className="notification-badge">{friendRequestsCount}</span>
+            )}
+          </Link>
           <Link to="/profile" className="profile-button">
             Profile
           </Link>
@@ -279,9 +286,9 @@ const Dashboard = () => {
             <div className="feature-icon">👥</div>
             <h3>Community</h3>
             <p>Connect with other learners</p>
-            <button className="feature-button" disabled>
-              Coming Soon
-            </button>
+            <Link to="/community" className="feature-button">
+              View Community
+            </Link>
           </div>
         </div>
 
