@@ -343,11 +343,32 @@ const DailyLesson = () => {
 
   if (loading) {
     return (
-      <div className="daily-lesson-container">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Loading your daily lesson...</p>
-        </div>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #39836e 0%, #24664a 100%)',
+        color: 'white'
+      }}>
+        <p style={{ 
+          fontSize: '1.2rem', 
+          margin: '0 0 20px 0',
+          color: 'white',
+          animation: 'none',
+          transform: 'none'
+        }}>
+          Loading database...
+        </p>
+        <div style={{
+          width: '30px',
+          height: '30px',
+          border: '3px solid rgba(255, 255, 255, 0.3)',
+          borderTop: '3px solid white',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }}></div>
       </div>
     );
   }
@@ -459,7 +480,14 @@ const DailyLesson = () => {
           className={`complete-button ${completing ? 'loading' : ''} ${alreadyCompletedToday ? 'completed' : ''} ${!canMarkComplete() ? 'disabled' : ''}`}
         >
           {completing ? (
-            <div className="spinner"></div>
+            <div style={{
+              width: '16px',
+              height: '16px',
+              border: '2px solid rgba(255, 255, 255, 0.3)',
+              borderTop: '2px solid white',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}></div>
           ) : alreadyCompletedToday ? (
             'Already Completed Today'
           ) : !canMarkComplete() ? (

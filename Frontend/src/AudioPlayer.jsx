@@ -155,7 +155,14 @@ const AudioPlayer = ({ surahNumber, verseNumber, className = '' }) => {
               title="Play recitation"
             >
               {isLoading ? (
-                <div className="loading-spinner"></div>
+                <div style={{
+                  width: '16px',
+                  height: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  borderTop: '2px solid white',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }}></div>
               ) : (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z"/>
