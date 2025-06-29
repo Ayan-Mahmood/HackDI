@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db } from './firebase-config.js';
-import { doc, getDoc } from "firebase/firestore";
+import { auth } from './firebase-config.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ShareButton from './ShareButton';
+import AudioPlayer from './AudioPlayer';
 import './QuranViewer.css';
 
 const QuranViewer = () => {
@@ -10,7 +10,6 @@ const QuranViewer = () => {
   const location = useLocation();
   const [currentVerse, setCurrentVerse] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const [surahNumber, setSurahNumber] = useState(1);
   const [verseNumber, setVerseNumber] = useState(1);
   const [surahInfo, setSurahInfo] = useState(null);
@@ -19,8 +18,6 @@ const QuranViewer = () => {
     // Check if user is authenticated
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
-        setUser(currentUser);
-        
         // Get surah and verse from location state or URL params
         const params = new URLSearchParams(location.search);
         const surah = parseInt(params.get('surah')) || location.state?.surah || 1;
@@ -167,6 +164,12 @@ const QuranViewer = () => {
             <p>{currentVerse?.english}</p>
           </div>
         </div>
+
+        <AudioPlayer 
+          surahNumber={currentVerse?.surahNo}
+          verseNumber={currentVerse?.ayahNo}
+          className="verse-audio"
+        />
       </div>
 
       <div className="navigation-controls">

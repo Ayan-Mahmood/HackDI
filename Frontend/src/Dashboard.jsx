@@ -8,18 +8,17 @@ import './Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [username, setUsername] = useState('');
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [userProgress, setUserProgress] = useState(null);
   const [surahs, setSurahs] = useState([]);
   const [friendRequestsCount, setFriendRequestsCount] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser(currentUser);
+        setUserData(currentUser);
         
         // Fetch user profile data from Firestore
         try {
@@ -28,14 +27,10 @@ const Dashboard = () => {
           
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            setUsername(userData.username || currentUser.email);
             setUserProgress(userData);
-          } else {
-            setUsername(currentUser.email);
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
-          setUsername(currentUser.email);
         }
         
         // Fetch surah list

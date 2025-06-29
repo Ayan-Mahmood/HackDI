@@ -122,6 +122,11 @@
   font-size: 1.1rem;
 }
 
+.verse-audio {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
 .verse-actions {
   margin-top: 1rem;
   display: flex;

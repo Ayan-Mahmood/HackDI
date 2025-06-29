@@ -3,6 +3,7 @@ import { auth, db } from './firebase-config.js';
 import { doc, updateDoc, getDoc, increment } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import ShareButton from './ShareButton';
+import AudioPlayer from './AudioPlayer';
 import './DailyLesson.css';
 
 const DailyLesson = () => {
@@ -23,7 +24,6 @@ const DailyLesson = () => {
     // Check if user is authenticated
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
-        setUser(currentUser);
         fetchUserData(currentUser);
       } else {
         navigate('/login');
@@ -37,6 +37,9 @@ const DailyLesson = () => {
     try {
       setLoading(true);
       setError('');
+      
+      // Set the user state
+      setUser(currentUser);
       
       // Get user's progress and goals from Firestore
       const userDocRef = doc(db, "users", currentUser.uid);
@@ -404,6 +407,12 @@ const DailyLesson = () => {
                   <p>{verse.english}</p>
                 </div>
               </div>
+
+              <AudioPlayer 
+                surahNumber={verse.surahNo}
+                verseNumber={verse.ayahNo}
+                className="verse-audio"
+              />
 
               <div className="verse-actions">
                 <ShareButton 

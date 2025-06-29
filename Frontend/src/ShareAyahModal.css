@@ -120,6 +120,12 @@
   border-left: 4px solid #fbbf24;
 }
 
+.share-modal-audio {
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 .share-form {
   padding: 0 24px 24px 24px;
 }

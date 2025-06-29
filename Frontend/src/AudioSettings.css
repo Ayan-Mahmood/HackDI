@@ -1,0 +1,264 @@
+.audio-settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.audio-settings-modal {
+  background: white;
+  border-radius: 20px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0 24px;
+  border-bottom: 1px solid #e1e5e9;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: #f1f5f9;
+  color: #333;
+}
+
+.settings-content {
+  padding: 0 24px;
+}
+
+.setting-group {
+  margin-bottom: 24px;
+}
+
+.setting-group label {
+  display: block;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.setting-group select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  background: white;
+  color: #333;
+}
+
+.setting-group select:focus {
+  outline: none;
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+}
+
+.setting-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.reciter-info {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.reciter-info h3 {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.reciter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reciter-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e1e5e9;
+}
+
+.reciter-name {
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.selected-badge {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #222;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 0 24px 24px 24px;
+}
+
+.cancel-button {
+  padding: 12px 24px;
+  background: #f1f5f9;
+  color: #666;
+  border: 2px solid #e1e5e9;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #333;
+}
+
+.save-button {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #222;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+}
+
+.save-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+}
+
+.save-button:disabled {
+  background: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .audio-settings-modal {
+    margin: 20px;
+    max-height: calc(100vh - 40px);
+  }
+  
+  .modal-header {
+    padding: 20px 20px 0 20px;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .settings-content {
+    padding: 0 20px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    padding: 0 20px 20px 20px;
+  }
+  
+  .cancel-button,
+  .save-button {
+    width: 100%;
+    padding: 14px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .audio-settings-overlay {
+    padding: 10px;
+  }
+  
+  .audio-settings-modal {
+    margin: 10px;
+  }
+  
+  .modal-header {
+    padding: 16px 16px 0 16px;
+  }
+  
+  .settings-content {
+    padding: 0 16px;
+  }
+  
+  .modal-actions {
+    padding: 0 16px 16px 16px;
+  }
+} 

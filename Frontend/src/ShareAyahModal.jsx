@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { db, auth } from './firebase-config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import AudioPlayer from './AudioPlayer';
 import './ShareAyahModal.css';
 
 const ShareAyahModal = ({ onClose, ayahData }) => {
@@ -72,6 +73,12 @@ const ShareAyahModal = ({ onClose, ayahData }) => {
             <div className="arabic-text">{ayahData.arabicText}</div>
             <div className="translation-text">{ayahData.translation}</div>
           </div>
+          
+          <AudioPlayer 
+            surahNumber={ayahData.surahNumber}
+            verseNumber={ayahData.verseNumber}
+            className="share-modal-audio"
+          />
         </div>
 
         <form onSubmit={handleSubmit} className="share-form">
