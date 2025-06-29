@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db, auth } from './firebase-config';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDoc, doc } from 'firebase/firestore';
 import AudioPlayer from './AudioPlayer';
 import './ShareAyahModal.css';
 
@@ -19,12 +19,21 @@ const ShareAyahModal = ({ onClose, ayahData }) => {
         return;
       }
 
+      // Fetch username from users collection
+      let username = user.email;
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          username = userDoc.data().username || user.email;
+        }
+      } catch (err) {}
+
       // Create a thread with the ayah data and user's comment
       const threadData = {
         title: `Reflection on ${ayahData.surahName} (${ayahData.surahNumber}:${ayahData.verseNumber})`,
         content: `**Ayah Shared:**\n\n${ayahData.arabicText}\n\n**Translation:**\n${ayahData.translation}\n\n**My Thoughts:**\n${comment}`,
         userId: user.uid,
-        username: user.email, // or fetch username from users collection
+        username,
         timestamp: serverTimestamp(),
         likes: [],
         // Add ayah-specific metadata

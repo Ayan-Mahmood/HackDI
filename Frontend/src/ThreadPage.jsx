@@ -85,7 +85,7 @@ const ThreadPage = ({ threadId, onBack }) => {
 
   return (
     <div className="thread-page">
-      <button onClick={onBack}>Back</button>
+      <button onClick={onBack} className="back-button">Back</button>
       <h2>
         {thread.threadType === 'ayah-share' && (
           <span className="ayah-share-badge">📖 Ayah Share</span>
@@ -93,10 +93,10 @@ const ThreadPage = ({ threadId, onBack }) => {
         {thread.title}
       </h2>
       <div className="thread-meta">
-        <span>by {thread.username}</span>
+        <span>by {thread.username && thread.username.includes('@') ? thread.username.split('@')[0] : (thread.username || 'Unknown User')}</span>
         <span>{new Date(thread.timestamp?.toDate?.() || thread.timestamp).toLocaleString()}</span>
         <span>👍 {thread.likes ? thread.likes.length : 0}</span>
-        <button onClick={handleLike}>
+        <button onClick={handleLike} className="like-button">
           {thread.likes?.includes(user?.uid) ? 'Unlike' : 'Like'}
         </button>
       </div>

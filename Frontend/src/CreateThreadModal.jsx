@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db, auth } from './firebase-config';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDoc, doc } from 'firebase/firestore';
 
 const CreateThreadModal = ({ onClose }) => {
   const [title, setTitle] = useState('');
@@ -12,11 +12,19 @@ const CreateThreadModal = ({ onClose }) => {
     setLoading(true);
     const user = auth.currentUser;
     if (!user) return;
+    // Fetch username from users collection
+    let username = user.email;
+    try {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        username = userDoc.data().username || user.email;
+      }
+    } catch (err) {}
     await addDoc(collection(db, 'threads'), {
       title,
       content,
       userId: user.uid,
-      username: user.email, // or fetch username from users collection
+      username,
       timestamp: serverTimestamp(),
       likes: [],
     });
