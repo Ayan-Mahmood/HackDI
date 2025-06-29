@@ -1,7 +1,7 @@
 /* UserProfile.css */
 .profile-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background: linear-gradient(135deg, #39836e 0%, #24664a 100%);
   color: white;
   padding: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -43,10 +43,8 @@
 .profile-header h1 {
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #39836e, #24664a);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #fbbf24;
+  text-shadow: 0 2px 8px rgba(251,191,36,0.3);
 }
 
 .profile-header p {
@@ -81,12 +79,12 @@
 /* Testing Section Styles */
 .testing-section {
   margin-top: 2rem;
-  border: 2px dashed #39836e;
-  background: rgba(57, 131, 110, 0.05);
+  border: 2px dashed #fbbf24;
+  background: rgba(251,191,36,0.05);
 }
 
 .testing-section h3 {
-  color: #39836e;
+  color: #fbbf24;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -162,7 +160,7 @@
 .sidebar-header h2 {
   font-size: 1.8rem;
   margin-bottom: 0.5rem;
-  color: #39836e;
+  color: #fbbf24;
 }
 
 .sidebar-header p {
@@ -195,7 +193,7 @@
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(57, 131, 110, 0.2);
+  box-shadow: 0 8px 25px rgba(251,191,36,0.2);
 }
 
 .stat-icon {
@@ -205,7 +203,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #39836e, #24664a);
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
   border-radius: 12px;
   flex-shrink: 0;
 }
@@ -232,7 +230,7 @@
 }
 
 .form-section h3 {
-  color: #39836e;
+  color: #fbbf24;
   margin-bottom: 1.5rem;
   font-size: 1.2rem;
   font-weight: 600;
@@ -268,8 +266,8 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #39836e;
-  box-shadow: 0 0 0 2px rgba(57, 131, 110, 0.2);
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 2px rgba(251,191,36,0.2);
 }
 
 .form-input::placeholder {
@@ -287,7 +285,7 @@
   left: 0.8rem;
   width: 1.2rem;
   height: 1.2rem;
-  color: #39836e;
+  color: #fbbf24;
 }
 
 .goal-unit {
@@ -339,8 +337,8 @@
 }
 
 .radio-container input[type="radio"]:checked + .radio-checkmark {
-  border-color: #39836e;
-  background: #39836e;
+  border-color: #fbbf24;
+  background: #fbbf24;
 }
 
 .radio-container input[type="radio"]:checked + .radio-checkmark::after {
@@ -369,8 +367,8 @@
 
 .form-select:focus {
   outline: none;
-  border-color: #39836e;
-  box-shadow: 0 0 0 2px rgba(57, 131, 110, 0.2);
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 2px rgba(251,191,36,0.2);
 }
 
 .form-select option {
@@ -381,8 +379,8 @@
 .save-button {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #39836e, #24664a);
-  color: white;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #222;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
@@ -397,7 +395,7 @@
 
 .save-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(57, 131, 110, 0.4);
+  box-shadow: 0 6px 20px rgba(251,191,36,0.4);
 }
 
 .save-button:disabled {

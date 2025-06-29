@@ -10,15 +10,26 @@ const Community = () => {
 
   return (
     <div className="community-container">
-      <Link to="/dashboard" className="back-button" style={{ marginBottom: 24 }}>
-        Home
-      </Link>
-      <Leaderboard />
-      {selectedThread ? (
-        <ThreadPage threadId={selectedThread} onBack={() => setSelectedThread(null)} />
-      ) : (
-        <ThreadList onSelectThread={setSelectedThread} />
-      )}
+      <div className="community-header">
+        <Link to="/dashboard" className="back-button">
+          ← Back to Dashboard
+        </Link>
+        <h1>Community</h1>
+      </div>
+
+      <div className="community-content">
+        <div className="leaderboard-section">
+          <Leaderboard />
+        </div>
+
+        <div className="discussions-section">
+          {selectedThread ? (
+            <ThreadPage threadId={selectedThread} onBack={() => setSelectedThread(null)} />
+          ) : (
+            <ThreadList onSelectThread={setSelectedThread} />
+          )}
+        </div>
+      </div>
     </div>
   );
 };

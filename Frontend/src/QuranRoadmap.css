@@ -14,6 +14,8 @@
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
   font-weight: 700;
+  color: #fbbf24;
+  text-shadow: 0 2px 8px rgba(251,191,36,0.3);
 }
 
 .roadmap-header p {
@@ -44,7 +46,7 @@
   display: block;
   font-size: 2rem;
   font-weight: 700;
-  color: #4ade80;
+  color: #fbbf24;
   margin-bottom: 0.5rem;
 }
 
@@ -86,13 +88,13 @@
 }
 
 .surah-card.completed {
-  border-color: #4ade80;
-  background: rgba(74, 222, 128, 0.1);
+  border-color: #fbbf24;
+  background: rgba(251,191,36,0.1);
 }
 
 .surah-card.current {
   border-color: #fbbf24;
-  background: rgba(251, 191, 36, 0.1);
+  background: rgba(251,191,36,0.1);
   animation: pulse 2s infinite;
 }
 
@@ -142,10 +144,10 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+  background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
   border-radius: 5px;
   transition: width 0.3s ease;
-  box-shadow: 0 0 6px #4ade80cc;
+  box-shadow: 0 0 6px #fbbf24cc;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -212,7 +214,7 @@
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  50% { opacity: 0.5; }
 }
 
 /* Responsive Design */
@@ -226,21 +228,20 @@
   }
   
   .progress-summary {
-    gap: 1rem;
+    gap: 1.5rem;
   }
   
   .progress-stat {
     min-width: 100px;
-    padding: 1rem;
   }
   
   .surah-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.5rem;
   }
   
   .surah-card {
-    padding: 1rem;
+    padding: 0.6rem;
   }
 }
 
@@ -252,10 +253,11 @@
   .progress-summary {
     flex-direction: column;
     align-items: center;
+    gap: 1rem;
   }
   
   .surah-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
   
   .stat-number {
@@ -295,7 +297,6 @@
   height: 24px;
 }
 
-/* Responsive adjustments for back button */
 @media (max-width: 768px) {
   .back-nav-button {
     top: 0.5rem;

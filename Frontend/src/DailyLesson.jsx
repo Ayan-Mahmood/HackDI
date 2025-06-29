@@ -43,6 +43,7 @@ const DailyLesson = () => {
       
       if (userDoc.exists()) {
         const userData = userDoc.data();
+        console.log('User data from Firestore:', userData);
         setUserProgress(userData);
         setUserGoals(userData);
         
@@ -50,6 +51,12 @@ const DailyLesson = () => {
         const today = new Date().toDateString();
         const lastCompletedDate = userData.lastCompletedDate ? new Date(userData.lastCompletedDate).toDateString() : null;
         setAlreadyCompletedToday(today === lastCompletedDate);
+        
+        console.log('Date comparison:', {
+          today,
+          lastCompletedDate,
+          alreadyCompletedToday: today === lastCompletedDate
+        });
         
         // Fetch daily lesson based on user's goals
         await fetchDailyLesson(userData);
@@ -63,6 +70,7 @@ const DailyLesson = () => {
           dailyAyats: 3,
           learningMode: 'read'
         };
+        console.log('New user, using default data:', defaultData);
         setUserProgress(defaultData);
         setUserGoals(defaultData);
         await fetchDailyLesson(defaultData);
@@ -87,7 +95,16 @@ const DailyLesson = () => {
       const lastCompletedDate = userData.lastCompletedDate ? new Date(userData.lastCompletedDate).toDateString() : null;
       const isNewDay = today !== lastCompletedDate;
       
-      // If it's a new day, advance the position to the next verses
+      console.log('Debug info:', {
+        today,
+        lastCompletedDate,
+        isNewDay,
+        currentSurah,
+        currentVerse,
+        dailyAyats
+      });
+      
+      // If it's a new day and user has completed lessons before, advance to next position
       if (isNewDay && userData.lastCompletedDate) {
         // Calculate next position based on last completed lesson
         const lastCompletedSurah = userData.currentSurah || 1;
@@ -113,8 +130,8 @@ const DailyLesson = () => {
         
         console.log(`New day detected. Starting from: Surah ${currentSurah}, Verse ${currentVerse}`);
       } else {
-        // Same day - use the stored position
-        console.log(`Same day. Using stored position: Surah ${currentSurah}, Verse ${currentVerse}`);
+        // Same day or new user - use the stored position
+        console.log(`Same day or new user. Using stored position: Surah ${currentSurah}, Verse ${currentVerse}`);
       }
       
       // Fetch verses based on user's daily goal
@@ -174,36 +191,6 @@ const DailyLesson = () => {
         initialProgress[verseKey] = 0;
       });
       setMemorizationProgress(initialProgress);
-      
-      // If it's a new day, update the user's position in the database
-      if (isNewDay && userData.lastCompletedDate) {
-        const lastVerse = verses[verses.length - 1];
-        let nextVerse = lastVerse.ayahNo + 1;
-        let nextSurah = lastVerse.surahNo;
-        
-        // Check if we need to move to next surah
-        try {
-          const testResponse = await fetch(`https://quranapi.pages.dev/api/${nextSurah}/${nextVerse}.json`);
-          if (!testResponse.ok) {
-            // Next verse doesn't exist, move to next surah
-            nextSurah++;
-            nextVerse = 1;
-          }
-        } catch (error) {
-          // Error means verse doesn't exist, move to next surah
-          nextSurah++;
-          nextVerse = 1;
-        }
-        
-        // Update the user's position for the next day
-        const userDocRef = doc(db, "users", user.uid);
-        await updateDoc(userDocRef, {
-          currentSurah: nextSurah,
-          currentVerse: nextVerse
-        });
-        
-        console.log(`Updated position for next day: Surah ${nextSurah}, Verse ${nextVerse}`);
-      }
       
     } catch (error) {
       console.error('Error fetching daily lesson:', error);
@@ -265,24 +252,47 @@ const DailyLesson = () => {
       const newStreak = (userProgress?.currentStreak || 0) + 1;
       const newTotalVerses = (userProgress?.totalVersesCompleted || 0) + currentVerses.length;
       
-      // Update user progress - but DON'T update currentSurah/currentVerse yet
-      // Only update streak, completion date, and total verses
+      // Calculate next position for the next lesson
+      const lastVerse = currentVerses[currentVerses.length - 1];
+      let nextVerse = lastVerse.ayahNo + 1;
+      let nextSurah = lastVerse.surahNo;
+      
+      // Check if we need to move to next surah
+      try {
+        const testResponse = await fetch(`https://quranapi.pages.dev/api/${nextSurah}/${nextVerse}.json`);
+        if (!testResponse.ok) {
+          // Next verse doesn't exist, move to next surah
+          nextSurah++;
+          nextVerse = 1;
+        }
+      } catch (error) {
+        // Error means verse doesn't exist, move to next surah
+        nextSurah++;
+        nextVerse = 1;
+      }
+      
+      console.log(`Updating position after completion: Surah ${nextSurah}, Verse ${nextVerse}`);
+      
+      // Update user progress including the new position
       await updateDoc(userDocRef, {
         currentStreak: increment(1),
         lastCompletedDate: new Date().toISOString(),
         totalVersesCompleted: increment(currentVerses.length),
-        longestStreak: Math.max(newStreak, userProgress?.longestStreak || 0)
+        longestStreak: Math.max(newStreak, userProgress?.longestStreak || 0),
+        currentSurah: nextSurah,
+        currentVerse: nextVerse
       });
 
-      // Update local state - keep current position the same
+      // Update local state
       setAlreadyCompletedToday(true);
       setUserProgress(prev => ({
         ...prev,
         currentStreak: newStreak,
         lastCompletedDate: new Date().toISOString(),
         totalVersesCompleted: newTotalVerses,
-        longestStreak: Math.max(newStreak, prev?.longestStreak || 0)
-        // Note: currentSurah and currentVerse remain unchanged
+        longestStreak: Math.max(newStreak, prev?.longestStreak || 0),
+        currentSurah: nextSurah,
+        currentVerse: nextVerse
       }));
 
       // Prepare celebration data
@@ -376,7 +386,6 @@ const DailyLesson = () => {
               
               <div className="translation-container">
                 <div className="translation-section">
-                  <h3>English Translation</h3>
                   <p>{verse.english}</p>
                 </div>
               </div>

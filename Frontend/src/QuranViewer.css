@@ -18,6 +18,8 @@
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
   font-weight: 700;
+  color: #fbbf24;
+  text-shadow: 0 2px 8px rgba(251,191,36,0.3);
 }
 
 .viewer-header p {
@@ -63,13 +65,13 @@
   padding: 1.5rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  border-left: 4px solid #4ade80;
+  border-left: 4px solid #fbbf24;
 }
 
 .translation-section h3 {
   font-size: 1.1rem;
   margin-bottom: 1rem;
-  color: #4ade80;
+  color: #fbbf24;
   font-weight: 600;
 }
 
@@ -97,20 +99,20 @@
 
 .nav-button {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #39836e, #24664a);
-  color: white;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #222;
   border: none;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(57, 131, 110, 0.3);
+  box-shadow: 0 4px 15px rgba(251,191,36,0.3);
 }
 
 .nav-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(57, 131, 110, 0.4);
+  box-shadow: 0 6px 20px rgba(251,191,36,0.4);
 }
 
 .nav-button:disabled {
@@ -212,7 +214,7 @@
   }
   
   .verse-container {
-    padding: 2rem;
+    padding: 2rem 1.5rem;
   }
   
   .arabic-verse h2 {
@@ -226,12 +228,12 @@
   
   .nav-button {
     width: 100%;
-    max-width: 300px;
+    max-width: 200px;
   }
   
   .back-button {
     width: 100%;
-    max-width: 300px;
+    max-width: 200px;
   }
   
   .back-nav-button {
@@ -253,7 +255,7 @@
   }
   
   .arabic-verse h2 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
   
   .translation-section p {

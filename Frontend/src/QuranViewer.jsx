@@ -149,7 +149,6 @@ const QuranViewer = () => {
         
         <div className="translation-container">
           <div className="translation-section">
-            <h3>English Translation</h3>
             <p>{currentVerse?.english}</p>
           </div>
         </div>

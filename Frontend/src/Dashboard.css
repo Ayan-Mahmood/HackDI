@@ -205,7 +205,9 @@ body, .dashboard-container {
   }
   
   .profile-button,
-  .logout-button {
+  .logout-button,
+  .friends-button,
+  .community-button {
     width: 100%;
     text-align: center;
   }
@@ -273,7 +275,7 @@ body, .dashboard-container {
   display: block;
   font-size: 1.8rem;
   font-weight: 700;
-  color: #4ade80;
+  color: #fbbf24;
   margin-bottom: 0.5rem;
 }
 
@@ -294,7 +296,7 @@ body, .dashboard-container {
   text-align: center;
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #4ade80;
+  color: #fbbf24;
 }
 
 .roadmap-section p {
@@ -329,8 +331,8 @@ body, .dashboard-container {
 }
 
 .surah-item.completed {
-  border-color: #4ade80;
-  background: rgba(74, 222, 128, 0.1);
+  border-color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
 }
 
 .surah-item.current {
@@ -367,7 +369,7 @@ body, .dashboard-container {
 }
 
 .surah-name {
-  color: #16a34a;
+  color: #39836e;
   font-weight: 700;
 }
 
@@ -394,68 +396,70 @@ body, .dashboard-container {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4ade80 0%, #eab308 100%);
+  background: linear-gradient(90deg, #fbbf24 0%, #39836e 100%);
   border-radius: 7px;
   transition: width 0.3s ease;
-  box-shadow: 0 0 8px #4ade80cc;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
   position: relative;
 }
 
 .progress-label {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.7rem;
+  font-weight: 600;
   color: #222;
-  font-weight: 700;
 }
 
 .status-indicator {
-  display: none;
+  animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  50% { opacity: 0.5; }
 }
 
-/* Scrollbar styling for surah list */
 .surah-list::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .surah-list::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .surah-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
+  background: #fbbf24;
+  border-radius: 4px;
 }
 
 .surah-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: #f59e0b;
 }
 
 .daily-lessons-main-card {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto 36px auto;
   background: linear-gradient(135deg, #39836e 0%, #24664a 100%);
-  border-radius: 28px;
-  box-shadow: 0 8px 40px #39836e33, 0 0 0 4px #39836e22;
-  padding: 38px 32px 32px 32px;
+  border-radius: 24px;
+  padding: 32px;
   text-align: center;
+  color: white;
+  box-shadow: 0 8px 32px rgba(57, 131, 110, 0.3);
+  margin-bottom: 32px;
   position: relative;
-  z-index: 2;
+  overflow: hidden;
 }
 
 .streak-highlight {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 18px;
-  padding-bottom: 10px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
 }
 
 .streak-icon {
@@ -468,8 +472,8 @@ body, .dashboard-container {
 .streak-number {
   font-size: 3.5rem;
   font-weight: 900;
-  color: #fff;
-  text-shadow: 0 2px 16px #22c55e99, 0 0 8px #fff8;
+  color: #fbbf24;
+  text-shadow: 0 2px 16px #fbbf2499, 0 0 8px #fff8;
   margin-bottom: 0.2rem;
   letter-spacing: 2px;
 }
@@ -512,7 +516,7 @@ body, .dashboard-container {
 }
 
 .main-lesson-button {
-  background: linear-gradient(90deg, #fbbf24 0%, #22c55e 100%);
+  background: linear-gradient(90deg, #fbbf24 0%, #39836e 100%);
   color: #222;
   border: none;
   padding: 18px 38px;
@@ -529,9 +533,9 @@ body, .dashboard-container {
 }
 
 .main-lesson-button:hover {
-  background: linear-gradient(90deg, #22c55e 0%, #fbbf24 100%);
+  background: linear-gradient(90deg, #39836e 0%, #fbbf24 100%);
   color: #fff;
-  box-shadow: 0 8px 32px #22c55e44;
+  box-shadow: 0 8px 32px #39836e44;
   transform: translateY(-2px) scale(1.04);
 }
 
@@ -547,7 +551,7 @@ body, .dashboard-container {
 
 .main-lesson-button.completed:before {
   content: '✔ ';
-  color: #4ade80;
+  color: #fbbf24;
   font-size: 1.2em;
   margin-right: 6px;
 }
@@ -608,12 +612,12 @@ body, .dashboard-container {
 }
 
 .progress-bar.completed {
-  background: linear-gradient(90deg, #fbbf24 0%, #4ade80 100%);
+  background: linear-gradient(90deg, #fbbf24 0%, #39836e 100%);
   border: 2px solid #fbbf24;
   box-shadow: 0 0 8px #fbbf2444;
 }
 .progress-bar.completed .progress-fill {
-  background: linear-gradient(90deg, #fbbf24 0%, #22c55e 100%);
+  background: linear-gradient(90deg, #fbbf24 0%, #39836e 100%);
 }
 .progress-bar.completed .progress-label {
   color: #222;
@@ -635,6 +639,23 @@ body, .dashboard-container {
 }
 
 .friends-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.community-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: inline-block;
+}
+
+.community-button:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }

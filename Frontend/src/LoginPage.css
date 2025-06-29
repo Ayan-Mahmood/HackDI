@@ -105,9 +105,9 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #39836e;
+  border-color: #fbbf24;
   background: white;
-  box-shadow: 0 0 0 3px rgba(57, 131, 110, 0.1);
+  box-shadow: 0 0 0 3px rgba(251,191,36,0.1);
 }
 
 .form-input::placeholder {
@@ -173,8 +173,8 @@
 }
 
 .checkbox-container input[type="checkbox"]:checked + .checkmark {
-  background: #39836e;
-  border-color: #39836e;
+  background: #fbbf24;
+  border-color: #fbbf24;
 }
 
 .checkbox-container input[type="checkbox"]:checked + .checkmark::after {
@@ -190,34 +190,38 @@
 }
 
 .forgot-password {
-  color: #39836e;
+  color: #fbbf24;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
 }
 
 .forgot-password:hover {
-  color: #24664a;
+  color: #f59e0b;
   text-decoration: underline;
 }
 
 .login-button {
-  background: linear-gradient(135deg, #39836e 0%, #24664a 100%);
-  color: white;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #222;
   border: none;
-  padding: 14px;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(251,191,36,0.3);
 }
 
 .login-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(57, 131, 110, 0.3);
+  box-shadow: 0 8px 25px rgba(251,191,36,0.4);
 }
 
 .login-button:active:not(:disabled) {
@@ -225,11 +229,15 @@
 }
 
 .login-button:disabled {
-  opacity: 0.7;
+  background: #cccccc;
+  color: #666666;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .login-button.loading {
+  position: relative;
   color: transparent;
 }
 
@@ -240,7 +248,7 @@
   transform: translate(-50%, -50%);
   width: 20px;
   height: 20px;
-  border: 2px solid transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-top: 2px solid white;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -261,17 +269,18 @@
 .login-footer p {
   color: #666;
   font-size: 14px;
+  margin: 0;
 }
 
 .signup-link {
-  color: #39836e;
+  color: #fbbf24;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.2s ease;
 }
 
 .signup-link:hover {
-  color: #24664a;
+  color: #f59e0b;
   text-decoration: underline;
 }
 

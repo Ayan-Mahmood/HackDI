@@ -243,6 +243,9 @@ const Dashboard = () => {
               <span className="notification-badge">{friendRequestsCount}</span>
             )}
           </Link>
+          <Link to="/community" className="community-button">
+            Community
+          </Link>
           <Link to="/profile" className="profile-button">
             Profile
           </Link>
