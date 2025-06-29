@@ -192,6 +192,17 @@ const Dashboard = () => {
     return 'available';
   };
 
+  const getSurahProgress = (surahNumber, surahAyahs) => {
+    if (!userProgress) return 0;
+    const currentSurah = userProgress.currentSurah || 1;
+    const currentVerse = userProgress.currentVerse || 1;
+    if (surahNumber < currentSurah) return 100;
+    if (surahNumber === currentSurah) {
+      return Math.min(Math.round(((currentVerse-1) / surahAyahs) * 100), 100);
+    }
+    return 0;
+  };
+
   const handleSurahClick = (surahNumber) => {
     // Navigate to Quran viewer with specific surah
     navigate('/quran-viewer', { state: { surah: surahNumber, verse: 1 } });
@@ -235,46 +246,44 @@ const Dashboard = () => {
       </div>
 
       <div className="dashboard-content">
-        <div className="welcome-card">
-          <h2>Welcome back, {username}!</h2>
-          <p>This is your learning dashboard. More features coming soon!</p>
-          
-          {/* Progress Summary */}
-          <div className="progress-summary">
-            <div className="progress-stat">
-              <span className="stat-number">{userProgress?.currentStreak || 0}</span>
-              <span className="stat-label">Day Streak</span>
-            </div>
-            <div className="progress-stat">
-              <span className="stat-number">{userProgress?.totalVersesCompleted || 0}</span>
-              <span className="stat-label">Verses Completed</span>
-            </div>
-            <div className="progress-stat">
-              <span className="stat-number">{userProgress?.currentSurah || 1}</span>
-              <span className="stat-label">Current Surah</span>
+        {/* Daily Lessons Main Card */}
+        <div className="daily-lessons-main-card">
+          <div className="streak-highlight">
+            <div className="streak-icon">🔥</div>
+            <div className="streak-number">{userProgress?.currentStreak || 0}</div>
+            <div className="streak-label">Day Streak</div>
+            <div className="streak-motivation">
+              {userProgress?.lastCompletedDate && new Date(userProgress.lastCompletedDate).toDateString() === new Date().toDateString()
+                ? 'Great job! Come back tomorrow to keep your streak.'
+                : 'Keep your streak alive!'}
             </div>
           </div>
+          <h2>Daily Lessons</h2>
+          <p>Access today's Quran pages and ayāt</p>
+          <Link
+            to="/daily-lesson"
+            className={
+              userProgress?.lastCompletedDate && new Date(userProgress.lastCompletedDate).toDateString() === new Date().toDateString()
+                ? 'main-lesson-button completed'
+                : 'main-lesson-button'
+            }
+          >
+            {userProgress?.lastCompletedDate && new Date(userProgress.lastCompletedDate).toDateString() === new Date().toDateString()
+              ? 'Lesson Completed'
+              : "Start Today's Lesson"}
+          </Link>
         </div>
 
-        <div className="feature-cards">
-          <div className="feature-card">
-            <div className="feature-icon">📖</div>
-            <h3>Daily Lessons</h3>
-            <p>Access today's Quran pages and ayāt</p>
-            <Link to="/daily-lesson" className="feature-button">
-              Start Today's Lesson
-            </Link>
-          </div>
-
+        {/* Other Features */}
+        <div className="feature-cards de-emphasized">
           <div className="feature-card">
             <div className="feature-icon">🔥</div>
             <h3>Track Progress</h3>
             <p>Monitor your daily streaks and goals</p>
             <Link to="/profile" className="feature-button">
-              View Profile
+              View Stats
             </Link>
           </div>
-
           <div className="feature-card">
             <div className="feature-icon">👥</div>
             <h3>Community</h3>
@@ -293,6 +302,7 @@ const Dashboard = () => {
           <div className="surah-list">
             {surahs.map((surah) => {
               const status = getSurahStatus(surah.number);
+              const progress = getSurahProgress(surah.number, surah.numberOfAyahs);
               
               return (
                 <div
@@ -306,10 +316,15 @@ const Dashboard = () => {
                     <p className="surah-english">{surah.englishName}</p>
                     <p className="surah-ayahs">{surah.numberOfAyahs} verses</p>
                   </div>
-                  <div className="status-indicator">
-                    {status === 'completed' && '✓'}
-                    {status === 'current' && '●'}
-                    {status === 'available' && '○'}
+                  <div className={`progress-bar${progress === 100 ? ' completed' : ''}`}>
+                    <div 
+                      className="progress-fill"
+                      style={{ width: `${progress}%` }}
+                    >
+                      {progress > 0 && (
+                        <span className="progress-label">{progress}%{progress === 100 ? ' (Completed)' : ''}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

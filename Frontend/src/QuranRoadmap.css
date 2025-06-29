@@ -57,10 +57,10 @@
 
 .surah-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
-  max-width: 1200px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 2rem;
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -68,13 +68,15 @@
 .surah-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 1.5rem;
+  border-radius: 10px;
+  padding: 0.8rem;
   cursor: pointer;
   transition: all 0.3s ease;
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
+  font-size: 0.95rem;
+  min-height: unset;
 }
 
 .surah-card:hover:not(.locked) {
@@ -104,77 +106,63 @@
   box-shadow: none;
 }
 
-.surah-number {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1.1rem;
+.surah-card .surah-number {
+  width: 32px;
+  height: 32px;
+  font-size: 0.95rem;
 }
 
 .surah-info {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .surah-name {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #4ade80;
+  font-size: 1.05rem;
+  margin-bottom: 0.2rem;
 }
 
 .surah-english {
-  font-size: 1rem;
-  opacity: 0.9;
-  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.2rem;
 }
 
 .surah-ayahs {
-  font-size: 0.9rem;
-  opacity: 0.7;
+  font-size: 0.75rem;
 }
 
 .progress-bar {
   width: 100%;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
   overflow: hidden;
-  margin-bottom: 1rem;
+  margin-bottom: 0.2rem;
+  position: relative;
 }
 
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
-  border-radius: 3px;
+  border-radius: 5px;
   transition: width 0.3s ease;
+  box-shadow: 0 0 6px #4ade80cc;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
 }
 
+.progress-label {
+  font-size: 0.7rem;
+  color: #fff;
+  font-weight: 700;
+  margin-right: 6px;
+  text-shadow: 0 1px 4px #24664a;
+}
+
+/* Remove status-indicator styles */
 .status-indicator {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.surah-card.completed .status-indicator {
-  color: #4ade80;
-}
-
-.surah-card.current .status-indicator {
-  color: #fbbf24;
-}
-
-.surah-card.locked .status-indicator {
-  color: rgba(255, 255, 255, 0.5);
+  display: none;
 }
 
 .roadmap-actions {
@@ -272,5 +260,52 @@
   
   .stat-number {
     font-size: 1.5rem;
+  }
+}
+
+/* Back Navigation Button */
+.back-nav-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+}
+
+.back-nav-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-nav-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Responsive adjustments for back button */
+@media (max-width: 768px) {
+  .back-nav-button {
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .back-nav-button svg {
+    width: 20px;
+    height: 20px;
   }
 } 

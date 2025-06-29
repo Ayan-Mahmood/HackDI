@@ -12,8 +12,8 @@ const SignupPage = () => {
     password: '',
     confirmPassword: '',
     username: '',
-    dailyGoal: '1', // Default: 1 page
-    goalType: 'pages', // 'pages' or 'ayat'
+    dailyAyats: '3', // Default: 3 ayats
+    learningMode: 'read', // 'read' or 'memorize'
     preferredLanguage: 'english',
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
   });
@@ -62,8 +62,8 @@ const SignupPage = () => {
         uid: user.uid,
         email: formData.email,
         username: formData.username,
-        dailyGoal: parseInt(formData.dailyGoal),
-        goalType: formData.goalType,
+        dailyAyats: parseInt(formData.dailyAyats),
+        learningMode: formData.learningMode,
         preferredLanguage: formData.preferredLanguage,
         timezone: formData.timezone,
         createdAt: new Date().toISOString(),
@@ -219,48 +219,48 @@ const SignupPage = () => {
             <h3>Learning Goals</h3>
             
             <div className="form-group">
-              <label htmlFor="goalType">Goal Type</label>
+              <label htmlFor="learningMode">Learning Mode</label>
               <div className="radio-group">
                 <label className="radio-container">
                   <input
                     type="radio"
-                    name="goalType"
-                    value="pages"
-                    checked={formData.goalType === 'pages'}
+                    name="learningMode"
+                    value="read"
+                    checked={formData.learningMode === 'read'}
                     onChange={handleInputChange}
                   />
                   <span className="radio-checkmark"></span>
-                  Read Pages
+                  Read
                 </label>
                 <label className="radio-container">
                   <input
                     type="radio"
-                    name="goalType"
-                    value="ayat"
-                    checked={formData.goalType === 'ayat'}
+                    name="learningMode"
+                    value="memorize"
+                    checked={formData.learningMode === 'memorize'}
                     onChange={handleInputChange}
                   />
                   <span className="radio-checkmark"></span>
-                  Memorize Ayat
+                  Memorize
                 </label>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="dailyGoal">Daily Goal</label>
+              <label htmlFor="dailyAyats">Daily Ayats</label>
               <div className="input-wrapper">
                 <input
                   type="number"
-                  id="dailyGoal"
-                  name="dailyGoal"
-                  value={formData.dailyGoal}
+                  id="dailyAyats"
+                  name="dailyAyats"
+                  value={formData.dailyAyats}
                   onChange={handleInputChange}
                   min="1"
                   max="10"
                   className="form-input"
                 />
                 <span className="goal-unit">
-                  {formData.goalType === 'pages' ? 'pages' : 'ayat'} per day
+                  ayats per day
                 </span>
               </div>
             </div>

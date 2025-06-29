@@ -126,6 +126,17 @@ const QuranViewer = () => {
 
   return (
     <div className="quran-viewer-container">
+      {/* Back Button */}
+      <button 
+        onClick={() => navigate('/dashboard')}
+        className="back-nav-button"
+        title="Back to Dashboard"
+      >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
       <div className="viewer-header">
         <h1>Surah {currentVerse?.surahNo}, Verse {currentVerse?.ayahNo}</h1>
         <p>Quran Viewer</p>

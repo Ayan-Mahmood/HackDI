@@ -183,19 +183,15 @@ const QuranRoadmap = () => {
     return 'available';
   };
 
-  const getProgressPercentage = (surahNumber) => {
+  const getSurahProgress = (surahNumber, surahAyahs) => {
     if (!userProgress) return 0;
-    
-    const currentSurah = userProgress.currentSurah || 1;
-    const currentVerse = userProgress.currentVerse || 1;
-    
-    if (surahNumber < currentSurah) return 100;
-    if (surahNumber === currentSurah) {
-      const surah = surahs.find(s => s.number === surahNumber);
-      if (surah) {
-        return Math.round((currentVerse / surah.numberOfAyahs) * 100);
-      }
+    // If user is past this surah, it's 100%
+    if ((userProgress.currentSurah || 1) > surahNumber) return 100;
+    // If user is on this surah, progress is currentVerse-1
+    if ((userProgress.currentSurah || 1) === surahNumber) {
+      return Math.min(Math.round(((userProgress.currentVerse-1) / surahAyahs) * 100), 100);
     }
+    // Otherwise, not started
     return 0;
   };
 
@@ -217,6 +213,17 @@ const QuranRoadmap = () => {
 
   return (
     <div className="roadmap-container">
+      {/* Back Button */}
+      <button 
+        onClick={() => navigate('/dashboard')}
+        className="back-nav-button"
+        title="Back to Dashboard"
+      >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
       <div className="roadmap-header">
         <h1>Quran Roadmap</h1>
         <p>Track your progress through all 114 surahs</p>
@@ -239,31 +246,31 @@ const QuranRoadmap = () => {
       <div className="surah-grid">
         {surahs.map((surah) => {
           const status = getSurahStatus(surah.number);
-          const progress = getProgressPercentage(surah.number);
+          const progress = getSurahProgress(surah.number, surah.numberOfAyahs);
           
           return (
             <div
               key={surah.number}
               className={`surah-card ${status}`}
               onClick={() => handleSurahClick(surah.number)}
+              style={{ padding: '0.8rem', fontSize: '0.95rem', minHeight: 'unset' }}
             >
-              <div className="surah-number">{surah.number}</div>
-              <div className="surah-info">
-                <h3 className="surah-name">{surah.name}</h3>
-                <p className="surah-english">{surah.englishName}</p>
-                <p className="surah-ayahs">{surah.numberOfAyahs} verses</p>
+              <div className="surah-number" style={{ width: '32px', height: '32px', fontSize: '0.95rem' }}>{surah.number}</div>
+              <div className="surah-info" style={{ marginBottom: '0.5rem' }}>
+                <h3 className="surah-name" style={{ fontSize: '1.05rem', marginBottom: '0.2rem' }}>{surah.name}</h3>
+                <p className="surah-english" style={{ fontSize: '0.85rem', marginBottom: '0.2rem' }}>{surah.englishName}</p>
+                <p className="surah-ayahs" style={{ fontSize: '0.75rem' }}>{surah.numberOfAyahs} verses</p>
               </div>
-              <div className="progress-bar">
-                <div 
-                  className="progress-fill" 
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
-              <div className="status-indicator">
-                {status === 'completed' && '✓'}
-                {status === 'current' && '●'}
-                {status === 'available' && '○'}
-              </div>
+              {progress > 0 && (
+                <div className="progress-bar" style={{ height: '10px', marginBottom: '0.2rem' }}>
+                  <div 
+                    className="progress-fill" 
+                    style={{ width: `${progress}%` }}
+                  >
+                    <span className="progress-label" style={{ fontSize: '0.7rem', marginRight: '6px' }}>{progress}%</span>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}

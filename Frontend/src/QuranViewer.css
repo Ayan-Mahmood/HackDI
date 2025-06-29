@@ -173,6 +173,38 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Back Navigation Button */
+.back-nav-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+}
+
+.back-nav-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-nav-button svg {
+  width: 24px;
+  height: 24px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .quran-viewer-container {
@@ -200,6 +232,18 @@
   .back-button {
     width: 100%;
     max-width: 300px;
+  }
+  
+  .back-nav-button {
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .back-nav-button svg {
+    width: 20px;
+    height: 20px;
   }
 }
 
