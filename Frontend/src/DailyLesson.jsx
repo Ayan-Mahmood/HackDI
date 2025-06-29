@@ -396,7 +396,7 @@ const DailyLesson = () => {
         )}
         {alreadyCompletedToday && (
           <div className="completion-notice">
-            <p>✅ You've already completed today's lesson!</p>
+            <p>✅ You've already completed today's lesson! Preview the next lesson:</p>
           </div>
         )}
         {error && (
