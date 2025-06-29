@@ -36,10 +36,62 @@ const ThreadPage = ({ threadId, onBack }) => {
   if (loading) return <div>Loading...</div>;
   if (!thread) return <div>Thread not found.</div>;
 
+  // Function to format content with markdown-like formatting
+  const formatContent = (content) => {
+    if (!content) return '';
+    
+    // Split content by double newlines to separate sections
+    const sections = content.split('\n\n');
+    
+    return sections.map((section, index) => {
+      if (section.startsWith('**Ayah Shared:**')) {
+        return (
+          <div key={index} className="ayah-share-section">
+            <h3 className="ayah-share-title">📖 Ayah Shared</h3>
+            <div className="ayah-content">
+              {section.replace('**Ayah Shared:**\n\n', '').split('\n').map((line, lineIndex) => (
+                <div key={lineIndex} className="ayah-line">{line}</div>
+              ))}
+            </div>
+          </div>
+        );
+      } else if (section.startsWith('**Translation:**')) {
+        return (
+          <div key={index} className="translation-section">
+            <h4 className="translation-title">Translation</h4>
+            <div className="translation-content">
+              {section.replace('**Translation:**\n\n', '').split('\n').map((line, lineIndex) => (
+                <div key={lineIndex} className="translation-line">{line}</div>
+              ))}
+            </div>
+          </div>
+        );
+      } else if (section.startsWith('**My Thoughts:**')) {
+        return (
+          <div key={index} className="thoughts-section">
+            <h4 className="thoughts-title">💭 My Thoughts</h4>
+            <div className="thoughts-content">
+              {section.replace('**My Thoughts:**\n\n', '').split('\n').map((line, lineIndex) => (
+                <div key={lineIndex} className="thoughts-line">{line}</div>
+              ))}
+            </div>
+          </div>
+        );
+      } else {
+        return <div key={index} className="regular-content">{section}</div>;
+      }
+    });
+  };
+
   return (
     <div className="thread-page">
       <button onClick={onBack}>Back</button>
-      <h2>{thread.title}</h2>
+      <h2>
+        {thread.threadType === 'ayah-share' && (
+          <span className="ayah-share-badge">📖 Ayah Share</span>
+        )}
+        {thread.title}
+      </h2>
       <div className="thread-meta">
         <span>by {thread.username}</span>
         <span>{new Date(thread.timestamp?.toDate?.() || thread.timestamp).toLocaleString()}</span>
@@ -48,7 +100,9 @@ const ThreadPage = ({ threadId, onBack }) => {
           {thread.likes?.includes(user?.uid) ? 'Unlike' : 'Like'}
         </button>
       </div>
-      <div className="thread-content">{thread.content}</div>
+      <div className="thread-content">
+        {thread.threadType === 'ayah-share' ? formatContent(thread.content) : thread.content}
+      </div>
       <CommentList threadId={threadId} />
     </div>
   );

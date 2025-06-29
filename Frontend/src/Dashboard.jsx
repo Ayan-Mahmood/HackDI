@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from './firebase-config.js';
 import { signOut } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [userProgress, setUserProgress] = useState(null);
   const [surahs, setSurahs] = useState([]);
   const [friendRequestsCount, setFriendRequestsCount] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -39,6 +40,7 @@ const Dashboard = () => {
         
         // Fetch surah list
         await fetchSurahList();
+        await fetchFriendRequests(currentUser.uid);
       } else {
         navigate('/login');
       }
@@ -183,6 +185,17 @@ const Dashboard = () => {
     }
   };
 
+  const fetchFriendRequests = async (userId) => {
+    try {
+      const requestsRef = collection(db, 'friendships');
+      const q = query(requestsRef, where('user2Id', '==', userId), where('status', '==', 'pending'));
+      const snapshot = await getDocs(q);
+      setFriendRequestsCount(snapshot.size);
+    } catch (error) {
+      console.error('Error fetching friend requests:', error);
+    }
+  };
+
   const getSurahStatus = (surahNumber) => {
     if (!userProgress) return 'available';
     
@@ -217,6 +230,13 @@ const Dashboard = () => {
       console.error('Error signing out:', error);
     }
   };
+
+  // Filter surahs based on search term
+  const filteredSurahs = surahs.filter(surah => 
+    surah.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    surah.englishName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    surah.number.toString().includes(searchTerm)
+  );
 
   if (loading) {
     return (
@@ -309,8 +329,22 @@ const Dashboard = () => {
           <h2>Complete Quran</h2>
           <p>Click on any surah to read its verses</p>
           
+          {/* Search Bar */}
+          <div className="surah-search-container">
+            <input
+              type="text"
+              placeholder="Search surahs by name, English name, or number..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="surah-search-input"
+            />
+            <div className="search-results-count">
+              {filteredSurahs.length} of {surahs.length} surahs
+            </div>
+          </div>
+          
           <div className="surah-list">
-            {surahs.map((surah) => {
+            {filteredSurahs.map((surah) => {
               const status = getSurahStatus(surah.number);
               const progress = getSurahProgress(surah.number, surah.numberOfAyahs);
               

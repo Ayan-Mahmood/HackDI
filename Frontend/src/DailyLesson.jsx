@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from './firebase-config.js';
 import { doc, updateDoc, getDoc, increment } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
+import ShareButton from './ShareButton';
 import './DailyLesson.css';
 
 const DailyLesson = () => {
@@ -323,6 +324,20 @@ const DailyLesson = () => {
     navigate('/dashboard');
   };
 
+  // Prepare ayah data for sharing
+  const getAyahDataForSharing = (verse) => {
+    if (!verse) return null;
+    
+    return {
+      surahNumber: verse.surahNo,
+      surahName: `Surah ${verse.surahNo}`,
+      verseNumber: verse.ayahNo,
+      arabicText: verse.arabic1,
+      translation: verse.english,
+      source: 'Quran Quest - Daily Lesson'
+    };
+  };
+
   if (loading) {
     return (
       <div className="daily-lesson-container">
@@ -388,6 +403,15 @@ const DailyLesson = () => {
                 <div className="translation-section">
                   <p>{verse.english}</p>
                 </div>
+              </div>
+
+              <div className="verse-actions">
+                <ShareButton 
+                  ayahData={getAyahDataForSharing(verse)}
+                  className="small"
+                >
+                  Share this Ayah
+                </ShareButton>
               </div>
 
               {userGoals?.learningMode === 'memorize' && (

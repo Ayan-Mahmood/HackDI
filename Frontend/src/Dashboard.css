@@ -191,6 +191,17 @@ body, .dashboard-container {
 }
 
 /* Responsive Design */
+@media (max-width: 1300px) {
+  .roadmap-section {
+    max-width: 100vw;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .surah-list {
+    max-height: 500px;
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard-header {
     flex-direction: column;
@@ -231,6 +242,80 @@ body, .dashboard-container {
   
   .feature-card {
     padding: 20px;
+  }
+  
+  .surah-search-container {
+    margin-bottom: 1rem;
+  }
+  
+  .surah-search-input {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+  
+  .surah-item {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .surah-number {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+  
+  .surah-name {
+    font-size: 1.1rem;
+  }
+  
+  .surah-english {
+    font-size: 0.9rem;
+  }
+  
+  .surah-ayahs {
+    font-size: 0.8rem;
+  }
+  
+  .progress-bar {
+    width: 120px;
+    height: 14px;
+  }
+  
+  .progress-label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .surah-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+  
+  .surah-info {
+    width: 100%;
+  }
+  
+  .progress-bar {
+    width: 100%;
+    height: 12px;
+  }
+  
+  .surah-search-input {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .search-results-count {
+    font-size: 0.8rem;
+  }
+  
+  .surah-number {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
   }
 }
 
@@ -287,7 +372,7 @@ body, .dashboard-container {
 }
 
 .roadmap-section {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto 2rem auto;
   padding: 0 24px 0 24px;
 }
@@ -306,98 +391,165 @@ body, .dashboard-container {
 }
 
 .surah-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
   margin-top: 1.5rem;
   max-width: 100%;
   margin-left: 0;
   margin-right: 0;
   box-sizing: border-box;
   padding-left: 0;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.surah-search-container {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.surah-search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.surah-search-input:focus {
+  outline: none;
+  border-color: #fbbf24;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
+}
+
+.surah-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.search-results-count {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
 }
 
 .surah-item {
-  background: #fff;
+  background: white;
   border-radius: 12px;
-  box-shadow: 0 2px 10px #b9fbc011;
-  border: 1px solid #e0e0e0;
-  color: #222;
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 0;
 }
 
 .surah-item:hover:not(.locked) {
-  background: rgba(255, 255, 255, 0.15);
+  background: #f8f9fa;
   transform: translateX(5px);
+  border-color: #fbbf24;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
 }
 
 .surah-item.completed {
   border-color: #fbbf24;
-  background: rgba(251, 191, 36, 0.1);
+  background: #fffbf0;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.15);
 }
 
 .surah-item.current {
   border-color: #fbbf24;
-  background: rgba(251, 191, 36, 0.1);
+  background: #fffbf0;
   animation: pulse 2s infinite;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
 }
 
 .surah-item.locked {
   opacity: 0.6;
   cursor: not-allowed;
+  background: #f8f9fa;
 }
 
 .surah-item.locked:hover {
   transform: none;
-  background: rgba(255, 255, 255, 0.1);
+  background: #f8f9fa;
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .surah-number {
-  background: rgba(255, 255, 255, 0.2);
-  width: 40px;
-  height: 40px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   flex-shrink: 0;
+  color: #222;
+  box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
 }
 
 .surah-info {
   flex: 1;
+  min-width: 0;
 }
 
 .surah-name {
-  color: #39836e;
+  color: #333;
   font-weight: 700;
+  font-size: 1.2rem;
+  margin: 0 0 0.3rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .surah-english {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  margin-bottom: 0.25rem;
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
 }
 
 .surah-ayahs {
-  font-size: 0.8rem;
-  opacity: 0.7;
+  font-size: 0.9rem;
+  color: #888;
+  font-weight: 500;
 }
 
 .progress-bar {
-  width: 100%;
-  height: 14px;
-  background: #e0ffe0;
-  border-radius: 7px;
+  width: 140px;
+  height: 16px;
+  background: #e9ecef;
+  border-radius: 8px;
   overflow: hidden;
   margin-bottom: 0;
   position: relative;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #fbbf24 0%, #39836e 100%);
-  border-radius: 7px;
+  border-radius: 8px;
   transition: width 0.3s ease;
   position: relative;
 }
@@ -407,9 +559,10 @@ body, .dashboard-container {
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   color: #222;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .status-indicator {
@@ -597,18 +750,6 @@ body, .dashboard-container {
   font-size: 0.95rem;
   margin-bottom: 12px;
   color: #555;
-}
-
-@media (max-width: 1300px) {
-  .roadmap-section {
-    max-width: 100vw;
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  .surah-list {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 0.7rem;
-  }
 }
 
 .progress-bar.completed {

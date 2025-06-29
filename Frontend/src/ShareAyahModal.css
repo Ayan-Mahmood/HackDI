@@ -1,0 +1,277 @@
+.share-ayah-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.share-ayah-modal {
+  background: white;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0 24px;
+  border-bottom: 1px solid #e1e5e9;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: #f1f5f9;
+  color: #333;
+}
+
+.ayah-preview {
+  background: linear-gradient(135deg, #39836e 0%, #24664a 100%);
+  margin: 0 24px 24px 24px;
+  border-radius: 16px;
+  padding: 20px;
+  color: white;
+}
+
+.ayah-header {
+  margin-bottom: 16px;
+}
+
+.surah-info {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fbbf24;
+}
+
+.ayah-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.arabic-text {
+  text-align: right;
+  font-size: 1.3rem;
+  line-height: 2;
+  font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+  direction: rtl;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  border-radius: 12px;
+  border-right: 4px solid #fbbf24;
+}
+
+.translation-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  border-radius: 12px;
+  border-left: 4px solid #fbbf24;
+}
+
+.share-form {
+  padding: 0 24px 24px 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 120px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+}
+
+.form-group textarea::placeholder {
+  color: #a0aec0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancel-button {
+  padding: 12px 24px;
+  background: #f1f5f9;
+  color: #666;
+  border: 2px solid #e1e5e9;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #333;
+}
+
+.share-button {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #222;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+}
+
+.share-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+}
+
+.share-button:disabled {
+  background: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .share-ayah-modal {
+    margin: 20px;
+    max-height: calc(100vh - 40px);
+  }
+  
+  .modal-header {
+    padding: 20px 20px 0 20px;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .ayah-preview {
+    margin: 0 20px 20px 20px;
+    padding: 16px;
+  }
+  
+  .arabic-text {
+    font-size: 1.1rem;
+    padding: 12px;
+  }
+  
+  .translation-text {
+    font-size: 0.9rem;
+    padding: 12px;
+  }
+  
+  .share-form {
+    padding: 0 20px 20px 20px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .cancel-button,
+  .share-button {
+    width: 100%;
+    padding: 14px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .share-ayah-modal-overlay {
+    padding: 10px;
+  }
+  
+  .share-ayah-modal {
+    margin: 10px;
+  }
+  
+  .modal-header {
+    padding: 16px 16px 0 16px;
+  }
+  
+  .ayah-preview {
+    margin: 0 16px 16px 16px;
+    padding: 12px;
+  }
+  
+  .share-form {
+    padding: 0 16px 16px 16px;
+  }
+} 

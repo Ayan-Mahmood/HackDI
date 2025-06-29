@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from './firebase-config.js';
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate, useLocation } from 'react-router-dom';
+import ShareButton from './ShareButton';
 import './QuranViewer.css';
 
 const QuranViewer = () => {
@@ -113,6 +114,20 @@ const QuranViewer = () => {
     fetchVerse(prevSurah, 1);
   };
 
+  // Prepare ayah data for sharing
+  const getAyahDataForSharing = () => {
+    if (!currentVerse || !surahInfo) return null;
+    
+    return {
+      surahNumber: currentVerse.surahNo,
+      surahName: surahInfo.surahName || `Surah ${currentVerse.surahNo}`,
+      verseNumber: currentVerse.ayahNo,
+      arabicText: currentVerse.arabic1,
+      translation: currentVerse.english,
+      source: 'Quran Quest'
+    };
+  };
+
   if (loading) {
     return (
       <div className="quran-viewer-container">
@@ -193,6 +208,13 @@ const QuranViewer = () => {
       </div>
 
       <div className="viewer-actions">
+        <ShareButton 
+          ayahData={getAyahDataForSharing()}
+          className="large"
+        >
+          Share this Ayah
+        </ShareButton>
+        
         <button 
           onClick={() => navigate('/dashboard')}
           className="back-button"

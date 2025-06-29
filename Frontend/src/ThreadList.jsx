@@ -47,7 +47,12 @@ const ThreadList = ({ onSelectThread }) => {
       <ul>
         {filtered.map(thread => (
           <li key={thread.id} onClick={() => onSelectThread(thread.id)}>
-            <div className="thread-title">{thread.title}</div>
+            <div className="thread-title">
+              {thread.threadType === 'ayah-share' && (
+                <span className="ayah-share-badge">📖 Ayah Share</span>
+              )}
+              {thread.title}
+            </div>
             <div className="thread-meta">
               <span>by {thread.username}</span>
               <span>{new Date(thread.timestamp?.toDate?.() || thread.timestamp).toLocaleString()}</span>
