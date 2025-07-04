@@ -143,17 +143,20 @@ body, .signup-container {
 .input-icon {
   position: absolute;
   left: 16px;
+  top: 50%;
+  transform: translateY(-94%);
   width: 20px;
   height: 20px;
   color: #a0aec0;
   z-index: 1;
+  pointer-events: none;
 }
 
 .password-toggle {
   position: absolute;
   right: 14px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-94%);
   height: auto;
   width: 28px;
   background: transparent !important;
@@ -176,6 +179,7 @@ body, .signup-container {
   width: 18px;
   height: 18px;
   color: #a0aec0;
+  display: block;
 }
 
 .radio-group {
@@ -240,6 +244,8 @@ body, .signup-container {
 .goal-unit {
   position: absolute;
   right: 16px;
+  top: 50%;
+  transform: translateY(-94%);
   color: #a0aec0;
   font-size: 14px;
   pointer-events: none;

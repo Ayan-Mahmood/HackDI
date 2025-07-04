@@ -5,6 +5,7 @@
   padding: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   position: relative;
+  transition: background 0.5s ease;
 }
 
 .lesson-header {
@@ -781,4 +782,219 @@
   .stat-label {
     font-size: 0.7rem;
   }
+}
+
+/* Streak Reset Notification */
+.streak-reset-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out;
+  max-width: 400px;
+  width: 90%;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notification-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.notification-content p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.notification-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Mode Indicator */
+.mode-indicator {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.mode-icon {
+  font-size: 32px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.mode-indicator h1 {
+  margin: 0;
+  color: #ffc940;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Memorization Theme */
+.daily-lesson-container.memorize-theme {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+}
+
+.memorize-theme .lesson-header h1 {
+  color: #60a5fa;
+}
+
+.memorize-theme .lesson-header p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.memorize-theme .learning-mode-notice {
+  color: #60a5fa;
+}
+
+.memorize-theme .completion-notice p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.memorize-theme .back-nav-button {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.memorize-theme .back-nav-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.memorize-theme .verse-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.memorize-theme .verse-header h3 {
+  color: #60a5fa;
+}
+
+.memorize-theme .verse-number {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.memorize-theme .arabic-verse h2 {
+  color: #fbbf24;
+}
+
+.memorize-theme .translation-section p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.memorize-theme .verse-container.memorized {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.memorize-theme .complete-button {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+  color: white;
+}
+
+.memorize-theme .complete-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
+  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
+}
+
+.memorize-theme .memorization-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  color: white;
+}
+
+.memorize-theme .memorization-button:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.memorize-theme .memorization-progress {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.memorize-theme .memorization-progress .progress-fill {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.memorize-theme .memorization-progress .progress-text {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.memorize-theme .verse-actions button {
+  color: white;
+}
+
+.memorize-theme .error-message {
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+}
+
+/* Read Theme (default) */
+.daily-lesson-container.read-theme {
+  background: linear-gradient(135deg, #39836e 0%, #24664a 100%);
+}
+
+/* Loading and Debug Styles */
+.loading-verse {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-color);
+}
+
+.no-verses {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  color: var(--text-color);
+}
+
+.no-verses p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  word-break: break-all;
 } 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from './firebase-config.js';
 import { signOut } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
@@ -14,6 +14,106 @@ const Dashboard = () => {
   const [userProgress, setUserProgress] = useState(null);
   const [surahs, setSurahs] = useState([]);
   const [friendRequestsCount, setFriendRequestsCount] = useState(0);
+  const [showStreakResetNotification, setShowStreakResetNotification] = useState(false);
+  const [streakResetMessage, setStreakResetMessage] = useState('');
+  const [currentMode, setCurrentMode] = useState('read'); // 'read' or 'memorize'
+  const [modeCompletedToday, setModeCompletedToday] = useState({
+    read: false,
+    memorize: false
+  });
+
+  // Function to check and reset streak based on missed days
+  const checkAndResetStreak = (userData) => {
+    if (!userData?.lastCompletedDate) return userData;
+
+    const lastCompleted = new Date(userData.lastCompletedDate);
+    const today = new Date();
+    const daysSinceLastCompletion = Math.floor((today - lastCompleted) / (1000 * 60 * 60 * 24));
+
+    // If completed today, no change needed
+    if (daysSinceLastCompletion === 0) return userData;
+
+    // If missed more than 1 day
+    if (daysSinceLastCompletion > 1) {
+      // Reset streak to 0
+      return {
+        ...userData,
+        currentStreak: 0
+      };
+    }
+
+    // If missed exactly 1 day
+    if (daysSinceLastCompletion === 1) {
+      // Check if user has 14+ day streak for 1-day pass
+      if (userData.currentStreak >= 14) {
+        // Keep the streak as is (1-day pass)
+        return userData;
+      } else {
+        // Reset streak to 0
+        return {
+          ...userData,
+          currentStreak: 0
+        };
+      }
+    }
+
+    return userData;
+  };
+
+  const handleModeToggle = () => {
+    setCurrentMode(prevMode => prevMode === 'read' ? 'memorize' : 'read');
+  };
+
+  const getModeTheme = () => {
+    return currentMode === 'read' ? 'read-theme' : 'memorize-theme';
+  };
+
+  const getModeButtonText = () => {
+    return currentMode === 'read' ? 'Switch to Memorize Mode' : 'Switch to Read Mode';
+  };
+
+  const getModeIcon = () => {
+    return currentMode === 'read' ? '🧠' : '📖';
+  };
+
+  const getModeDescription = () => {
+    return currentMode === 'read' 
+      ? 'Read and understand the verses' 
+      : 'Memorize verses through repetition';
+  };
+
+  const checkModeCompletion = (userData) => {
+    if (!userData) return { read: false, memorize: false };
+
+    const today = new Date().toDateString();
+    
+    const readCompletedToday = userData.lastCompletedDate ? 
+      new Date(userData.lastCompletedDate).toDateString() === today : false;
+    
+    const memorizeCompletedToday = userData.memorizationLastCompletedDate ? 
+      new Date(userData.memorizationLastCompletedDate).toDateString() === today : false;
+    
+    return {
+      read: readCompletedToday,
+      memorize: memorizeCompletedToday
+    };
+  };
+
+  const getModeMetrics = () => {
+    if (!userProgress) return { metric: 0, label: 'Verses' };
+    
+    if (currentMode === 'read') {
+      return {
+        metric: userProgress.totalVersesCompleted || 0,
+        label: 'Ayats Completed'
+      };
+    } else {
+      return {
+        metric: userProgress.totalVersesMemorized || 0,
+        label: 'Ayats Memorized'
+      };
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -26,7 +126,32 @@ const Dashboard = () => {
           const userDoc = await getDoc(userDocRef);
           
           if (userDoc.exists()) {
-            const userData = userDoc.data();
+            let userData = userDoc.data();
+            const originalStreak = userData.currentStreak;
+            
+            // Check and potentially reset streak
+            userData = checkAndResetStreak(userData);
+            
+            // If streak was reset, update the database and show notification
+            if (userData.currentStreak === 0 && originalStreak > 0) {
+              await updateDoc(doc(db, "users", currentUser.uid), {
+                currentStreak: 0
+              });
+              
+              // Show streak reset notification
+              setStreakResetMessage(`Your ${originalStreak}-day streak has been reset to 0 due to missed days. Keep going to build a new streak!`);
+              setShowStreakResetNotification(true);
+              
+              // Auto-hide notification after 5 seconds
+              setTimeout(() => {
+                setShowStreakResetNotification(false);
+              }, 5000);
+            }
+            
+            // Check mode completion status
+            const modeCompletion = checkModeCompletion(userData);
+            setModeCompletedToday(modeCompletion);
+            
             setUserProgress(userData);
           }
         } catch (error) {
@@ -266,11 +391,37 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="dashboard-container">
+    <div className={`dashboard-container ${getModeTheme()}`}>
+      {/* Streak Reset Notification */}
+      {showStreakResetNotification && (
+        <div className="streak-reset-notification">
+          <div className="notification-content">
+            <span className="notification-icon">⚠️</span>
+            <p>{streakResetMessage}</p>
+            <button 
+              className="notification-close"
+              onClick={() => setShowStreakResetNotification(false)}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Mode Toggle Button */}
+      <button 
+        onClick={handleModeToggle}
+        className="mode-toggle-button"
+        title={getModeDescription()}
+      >
+        <span className="mode-icon">{getModeIcon()}</span>
+        <span className="mode-text">{getModeButtonText()}</span>
+      </button>
+
       <div className="dashboard-header">
         <div className="header-content">
           <h1>Welcome to Quran Quest</h1>
-          <p>Your daily Quran journey starts here</p>
+          <p>{getModeDescription()}</p>
         </div>
         <div className="header-actions">
           <Link to="/friends" className="friends-button">
@@ -299,24 +450,31 @@ const Dashboard = () => {
             <div className="streak-number">{userProgress?.currentStreak || 0}</div>
             <div className="streak-label">Day Streak</div>
             <div className="streak-motivation">
-              {userProgress?.lastCompletedDate && new Date(userProgress.lastCompletedDate).toDateString() === new Date().toDateString()
+              {modeCompletedToday[currentMode] 
                 ? 'Great job! Come back tomorrow to keep your streak.'
                 : 'Keep your streak alive!'}
             </div>
           </div>
           <h2>Daily Lessons</h2>
           <p>Access today's Quran pages and ayāt</p>
+          <div className="mode-metrics">
+            <div className="metric-item">
+              <span className="metric-value">{getModeMetrics().metric}</span>
+              <span className="metric-label">{getModeMetrics().label}</span>
+            </div>
+          </div>
           <Link
             to="/daily-lesson"
+            state={{ mode: currentMode }}
             className={
-              userProgress?.lastCompletedDate && new Date(userProgress.lastCompletedDate).toDateString() === new Date().toDateString()
+              modeCompletedToday[currentMode]
                 ? 'main-lesson-button completed'
                 : 'main-lesson-button'
             }
           >
-            {userProgress?.lastCompletedDate && new Date(userProgress.lastCompletedDate).toDateString() === new Date().toDateString()
+            {modeCompletedToday[currentMode]
               ? 'Lesson Completed'
-              : "Start Today's Lesson"}
+              : `Start Today's ${currentMode === 'read' ? 'Reading' : 'Memorization'} Lesson`}
           </Link>
         </div>
 

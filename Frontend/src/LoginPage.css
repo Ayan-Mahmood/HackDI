@@ -122,17 +122,20 @@
 .input-icon {
   position: absolute;
   left: 16px;
+  top: 50%;
+  transform: translateY(-90%);
   width: 20px;
   height: 20px;
   color: #a0aec0;
   z-index: 1;
+  pointer-events: none;
 }
 
 .input-icon-left {
   position: absolute;
   left: 16px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-90%);
   width: 20px;
   height: 20px;
   color: #a0aec0;
@@ -143,22 +146,29 @@
 .password-toggle {
   position: absolute;
   right: 12px;
+  top: 50%;
+  transform: translateY(-90%);
   background: none;
   border: none;
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
   transition: all 0.2s ease;
-}
-
-.password-toggle:hover {
-  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
 }
 
 .password-toggle svg {
   width: 18px;
   height: 18px;
   color: #a0aec0;
+  display: block;
+}
+
+.password-toggle:hover {
+  background: #f1f5f9;
 }
 
 .form-options {
