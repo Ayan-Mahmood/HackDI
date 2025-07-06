@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { auth, db } from './firebase-config.js';
 import { doc, updateDoc, getDoc, increment } from "firebase/firestore";
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -7,13 +7,16 @@ import AudioPlayer from './AudioPlayer';
 import './DailyLesson.css';
 import AudioSettings from './AudioSettings';
 
+const MAX_AYATS = 6236;
+
 const DailyLesson = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const currentMode = location.state?.mode || 'read';
+  const currentMode = location.state?.mode || localStorage.getItem('quranQuestMode') || 'read';
   
   const [currentVerses, setCurrentVerses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [versesLoading, setVersesLoading] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [user, setUser] = useState(null);
   const [userProgress, setUserProgress] = useState(null);
@@ -25,6 +28,8 @@ const DailyLesson = () => {
   const [celebrationData, setCelebrationData] = useState(null);
   const [showStreakResetNotification, setShowStreakResetNotification] = useState(false);
   const [streakResetMessage, setStreakResetMessage] = useState('');
+  const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
+  const celebrationModalRef = useRef(null);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -38,6 +43,20 @@ const DailyLesson = () => {
 
     return () => unsubscribe();
   }, [navigate]);
+
+  // Update completion status when mode or user progress changes
+  useEffect(() => {
+    if (userProgress) {
+      const modeCompletedToday = checkIfModeCompletedToday(userProgress);
+      setAlreadyCompletedToday(modeCompletedToday);
+    }
+  }, [currentMode, userProgress]);
+
+  useEffect(() => {
+    if (showCelebration) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [showCelebration]);
 
   // Function to check and reset streak based on missed days
   const checkAndResetStreak = (userData) => {
@@ -90,6 +109,22 @@ const DailyLesson = () => {
     };
   };
 
+  const checkIfModeCompletedToday = (userData) => {
+    if (!userData) return false;
+    
+    const today = new Date().toDateString();
+    
+    if (currentMode === 'read' && userData.lastCompletedDate) {
+      const lastCompleted = new Date(userData.lastCompletedDate);
+      return lastCompleted.toDateString() === today;
+    } else if (currentMode === 'memorize' && userData.memorizationLastCompletedDate) {
+      const lastCompleted = new Date(userData.memorizationLastCompletedDate);
+      return lastCompleted.toDateString() === today;
+    }
+    
+    return false;
+  };
+
   const fetchUserData = async (currentUser) => {
     try {
       setLoading(true);
@@ -135,19 +170,8 @@ const DailyLesson = () => {
         setUserGoals(goals);
         
         // Check if user already completed today's lesson for this specific mode
-        if (currentMode === 'read' && userData.lastCompletedDate) {
-          const lastCompleted = new Date(userData.lastCompletedDate);
-          const today = new Date();
-          const isToday = lastCompleted.toDateString() === today.toDateString();
-          setAlreadyCompletedToday(isToday);
-        } else if (currentMode === 'memorize' && userData.memorizationLastCompletedDate) {
-          const lastCompleted = new Date(userData.memorizationLastCompletedDate);
-          const today = new Date();
-          const isToday = lastCompleted.toDateString() === today.toDateString();
-          setAlreadyCompletedToday(isToday);
-        } else {
-          setAlreadyCompletedToday(false);
-        }
+        const modeCompletedToday = checkIfModeCompletedToday(userData);
+        setAlreadyCompletedToday(modeCompletedToday);
         
         // Fetch daily lesson after user data is loaded
         console.log('Calling fetchDailyLesson with userData:', userData);
@@ -171,6 +195,7 @@ const DailyLesson = () => {
           dailyAyats: 3,
           learningMode: currentMode
         });
+        setAlreadyCompletedToday(false);
         await fetchDailyLesson(defaultUserData);
       }
     } catch (error) {
@@ -201,6 +226,7 @@ const DailyLesson = () => {
 
   const fetchDailyLesson = async (userData) => {
     try {
+      setVersesLoading(true);
       console.log('Fetching daily lesson for mode:', currentMode);
       
       // Use different progress tracking based on mode
@@ -215,63 +241,70 @@ const DailyLesson = () => {
         currentVerse = userData.memorizationCurrentVerse || 1;
       }
       
-      const dailyAyats = userData.dailyAyats || 3;
+      const dailyAyats = currentMode === 'memorize'
+        ? userData.dailyMemorizationAyats || 3
+        : userData.dailyAyats || 3;
       
       console.log(`Fetching ${dailyAyats} verses starting from Surah ${currentSurah}, Verse ${currentVerse}`);
       
-      const verses = [];
+      // Generate all the verse URLs we need to fetch
+      const verseUrls = [];
       let currentSurahForFetching = currentSurah;
       let currentVerseForFetching = currentVerse;
       
       for (let i = 0; i < dailyAyats; i++) {
+        const apiUrl = `https://quranapi.pages.dev/api/${currentSurahForFetching}/${currentVerseForFetching}.json`;
+        verseUrls.push({
+          url: apiUrl,
+          surahNo: currentSurahForFetching,
+          ayahNo: currentVerseForFetching
+        });
+        
+        // Move to next verse
+        currentVerseForFetching++;
+      }
+      
+      // Fetch all verses in parallel for better performance
+      console.log('Fetching verses in parallel:', verseUrls.map(v => `${v.surahNo}:${v.ayahNo}`));
+      
+      const fetchPromises = verseUrls.map(async (verseInfo) => {
         try {
-          const apiUrl = `https://quranapi.pages.dev/api/${currentSurahForFetching}/${currentVerseForFetching}.json`;
-          console.log(`Fetching: ${apiUrl}`);
-          
-          const response = await fetch(apiUrl);
-          
+          const response = await fetch(verseInfo.url);
           if (response.ok) {
             const verseData = await response.json();
-            console.log('Verse data received:', verseData);
-            verses.push({
+            return {
               ...verseData,
-              surahNo: currentSurahForFetching,
-              ayahNo: currentVerseForFetching
-            });
-            
-            // Move to next verse
-            currentVerseForFetching++;
+              surahNo: verseInfo.surahNo,
+              ayahNo: verseInfo.ayahNo
+            };
           } else {
-            console.log(`Verse ${currentSurahForFetching}:${currentVerseForFetching} not found, trying next surah`);
             // If verse doesn't exist, try next surah
-            currentSurahForFetching++;
-            currentVerseForFetching = 1;
-            
-            const nextVerseResponse = await fetch(`https://quranapi.pages.dev/api/${currentSurahForFetching}/${currentVerseForFetching}.json`);
+            const nextSurah = verseInfo.surahNo + 1;
+            const nextVerseResponse = await fetch(`https://quranapi.pages.dev/api/${nextSurah}/1.json`);
             
             if (nextVerseResponse.ok) {
               const nextVerseData = await nextVerseResponse.json();
-              console.log('Next surah verse data:', nextVerseData);
-              verses.push({
+              return {
                 ...nextVerseData,
-                surahNo: currentSurahForFetching,
-                ayahNo: currentVerseForFetching
-              });
-              
-              // Move to next verse
-              currentVerseForFetching++;
+                surahNo: nextSurah,
+                ayahNo: 1
+              };
             } else {
-              console.log(`Next surah ${currentSurahForFetching}:${currentVerseForFetching} also not found`);
-              // If we can't find any more verses, break the loop
-              break;
+              console.log(`Verse ${verseInfo.surahNo}:${verseInfo.ayahNo} and fallback not found`);
+              return null;
             }
           }
         } catch (error) {
-          console.error(`Error fetching verse ${currentSurahForFetching}:${currentVerseForFetching}:`, error);
-          // Try to continue with next verse
-          currentVerseForFetching++;
+          console.error(`Error fetching verse ${verseInfo.surahNo}:${verseInfo.ayahNo}:`, error);
+          return null;
         }
-      }
+      });
+      
+      // Wait for all fetches to complete
+      const results = await Promise.all(fetchPromises);
+      
+      // Filter out null results and create the final verses array
+      const verses = results.filter(verse => verse !== null);
       
       console.log('Final verses array:', verses);
       
@@ -308,6 +341,8 @@ const DailyLesson = () => {
         arabic1: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
         english: "In the name of Allah, the Entirely Merciful, the Especially Merciful."
       }]);
+    } finally {
+      setVersesLoading(false);
     }
   };
 
@@ -345,11 +380,22 @@ const DailyLesson = () => {
     return null;
   };
 
-  const handleComplete = async () => {
-    if (!user || !currentVerses.length || alreadyCompletedToday || !canMarkComplete()) return;
+  const handleComplete = async (event) => {
+    if (!user || !currentVerses.length || !canMarkComplete()) return;
+
+    // Capture button position
+    if (event && event.currentTarget) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setButtonPosition({
+        x: rect.left + rect.width / 2,
+        y: rect.top + scrollTop
+      });
+    }
 
     try {
       setCompleting(true);
+      console.log('Starting completion process for mode:', currentMode);
       
       const userDocRef = doc(db, "users", user.uid);
       
@@ -364,25 +410,46 @@ const DailyLesson = () => {
       }
       
       const alreadyCompletedThisModeToday = today === lastCompletedDate;
+      console.log('Already completed this mode today:', alreadyCompletedThisModeToday);
+      console.log('Today:', today);
+      console.log('Last completed date:', lastCompletedDate);
+      
+      // Prevent completion if this mode was already completed today
+      if (alreadyCompletedThisModeToday) {
+        console.log(`${currentMode} mode already completed today`);
+        setError(`${currentMode} lesson already completed today. Come back tomorrow for a new lesson!`);
+        setCompleting(false);
+        return;
+      }
       
       // Calculate new streak and totals
       let newStreak = userProgress?.currentStreak || 0;
       let newTotalVerses = userProgress?.totalVersesCompleted || 0;
       let newTotalMemorized = userProgress?.totalVersesMemorized || 0;
       
-      // Only update streak if no mode was completed today
+      console.log('Current streak before update:', newStreak);
+      
+      // Check if ANY mode was completed today (for streak calculation)
       const anyModeCompletedToday = (userProgress?.lastCompletedDate && new Date(userProgress.lastCompletedDate).toDateString() === today) ||
                                    (userProgress?.memorizationLastCompletedDate && new Date(userProgress.memorizationLastCompletedDate).toDateString() === today);
       
+      console.log('Any mode completed today:', anyModeCompletedToday);
+      
+      // Only update streak if no mode was completed today
       if (!anyModeCompletedToday) {
         newStreak += 1;
+        console.log('Streak incremented to:', newStreak);
+      } else {
+        console.log('Streak not incremented - another mode was completed today');
       }
       
       // Update appropriate totals based on mode
       if (currentMode === 'read') {
         newTotalVerses += currentVerses.length;
+        console.log('Updated total verses:', newTotalVerses);
       } else {
         newTotalMemorized += currentVerses.length;
+        console.log('Updated total memorized:', newTotalMemorized);
       }
       
       // Calculate next position for the next lesson
@@ -417,6 +484,9 @@ const DailyLesson = () => {
           updateData.currentStreak = increment(1);
           updateData.lastCompletedDate = new Date().toISOString();
           updateData.longestStreak = Math.max(newStreak, userProgress?.longestStreak || 0);
+        } else {
+          // Still update the completion date even if streak wasn't incremented
+          updateData.lastCompletedDate = new Date().toISOString();
         }
       } else {
         updateData.totalVersesMemorized = increment(currentVerses.length);
@@ -426,10 +496,16 @@ const DailyLesson = () => {
           updateData.currentStreak = increment(1);
           updateData.memorizationLastCompletedDate = new Date().toISOString();
           updateData.longestStreak = Math.max(newStreak, userProgress?.longestStreak || 0);
+        } else {
+          // Still update the completion date even if streak wasn't incremented
+          updateData.memorizationLastCompletedDate = new Date().toISOString();
         }
       }
       
+      console.log('Update data to be sent:', updateData);
+      
       await updateDoc(userDocRef, updateData);
+      console.log('Database update completed successfully');
 
       // Update local state
       setAlreadyCompletedToday(true);
@@ -440,30 +516,37 @@ const DailyLesson = () => {
         totalVersesMemorized: newTotalMemorized,
         longestStreak: Math.max(newStreak, prev?.longestStreak || 0),
         ...(currentMode === 'read' ? {
-          lastCompletedDate: anyModeCompletedToday ? prev.lastCompletedDate : new Date().toISOString(),
+          lastCompletedDate: new Date().toISOString(),
           currentSurah: nextSurah,
           currentVerse: nextVerse
         } : {
-          memorizationLastCompletedDate: anyModeCompletedToday ? prev.memorizationLastCompletedDate : new Date().toISOString(),
+          memorizationLastCompletedDate: new Date().toISOString(),
           memorizationCurrentSurah: nextSurah,
           memorizationCurrentVerse: nextVerse
         })
       }));
 
+      // Clear any previous errors
+      setError('');
+
       // Prepare celebration data
       const achievement = getAchievementBadge(newStreak);
       const message = getMotivationalMessage(newStreak);
       
-      setCelebrationData({
+      const celebrationDataObj = {
         streak: newStreak,
         versesCompleted: currentVerses.length,
         achievement,
         message,
         totalVerses: currentMode === 'read' ? newTotalVerses : newTotalMemorized,
         modeCompleted: currentMode
-      });
+      };
+      
+      console.log('Celebration data prepared:', celebrationDataObj);
+      setCelebrationData(celebrationDataObj);
 
       // Show celebration modal
+      console.log('Setting showCelebration to true');
       setShowCelebration(true);
       
     } catch (error) {
@@ -578,17 +661,24 @@ const DailyLesson = () => {
       </div>
 
       <div className="verses-container">
-        {loading ? (
-          <div className="loading-verse">
-            <p>Loading today's lesson...</p>
+        {versesLoading ? (
+          <div className="loading-verses">
+            {[...Array(userGoals?.dailyAyats || 3)].map((_, index) => (
+              <div key={index} className="verse-skeleton">
+                <div className="skeleton-header">
+                  <div className="skeleton-title"></div>
+                  <div className="skeleton-number"></div>
+                </div>
+                <div className="skeleton-arabic"></div>
+                <div className="skeleton-translation"></div>
+                <div className="skeleton-audio"></div>
+                <div className="skeleton-actions"></div>
+              </div>
+            ))}
           </div>
         ) : currentVerses.length === 0 ? (
           <div className="no-verses">
-            <p>No verses loaded. Debug info:</p>
-            <p>Mode: {currentMode}</p>
-            <p>User Goals: {JSON.stringify(userGoals)}</p>
-            <p>User Progress: {JSON.stringify(userProgress)}</p>
-            <p>Current Verses: {JSON.stringify(currentVerses)}</p>
+            <p>No verses available. Please try refreshing the page.</p>
           </div>
         ) : (
           currentVerses.map((verse, index) => {
@@ -597,7 +687,10 @@ const DailyLesson = () => {
             const isMemorized = currentMode === 'memorize' ? memorizationCount >= 3 : true;
             
             return (
-              <div key={verseKey} className={`verse-container ${isMemorized ? 'memorized' : ''}`}>
+              <div 
+                key={verseKey} 
+                className={`verse-container ${isMemorized ? 'memorized' : ''}`}
+              >
                 <div className="verse-header">
                   <h3>Surah {verse.surahNo}, Verse {verse.ayahNo}</h3>
                   <span className="verse-number">({index + 1} of {userGoals?.dailyAyats})</span>
@@ -661,8 +754,8 @@ const DailyLesson = () => {
       <div className="lesson-actions">
         <button 
           onClick={handleComplete}
-          disabled={completing || alreadyCompletedToday || !canMarkComplete()}
-          className={`complete-button ${completing ? 'loading' : ''} ${alreadyCompletedToday ? 'completed' : ''} ${!canMarkComplete() ? 'disabled' : ''}`}
+          disabled={completing || alreadyCompletedToday || !canMarkComplete() || versesLoading}
+          className={`complete-button ${completing ? 'loading' : ''} ${alreadyCompletedToday ? 'completed' : ''} ${!canMarkComplete() ? 'disabled' : ''} ${versesLoading ? 'disabled' : ''}`}
         >
           {completing ? (
             <div style={{
@@ -673,6 +766,8 @@ const DailyLesson = () => {
               borderRadius: '50%',
               animation: 'spin 1s linear infinite'
             }}></div>
+          ) : versesLoading ? (
+            'Loading...'
           ) : alreadyCompletedToday ? (
             'Already Completed Today'
           ) : !canMarkComplete() ? (
@@ -680,6 +775,32 @@ const DailyLesson = () => {
           ) : (
             'Mark as Complete'
           )}
+        </button>
+        
+        {/* Temporary test button - remove after debugging */}
+        <button 
+          onClick={() => {
+            console.log('Test celebration modal');
+            setCelebrationData({
+              streak: 5,
+              versesCompleted: 3,
+              achievement: 'Test Achievement',
+              message: 'Test message',
+              totalVerses: 15,
+              modeCompleted: currentMode
+            });
+            setShowCelebration(true);
+          }}
+          style={{
+            padding: '0.5rem 1rem',
+            background: 'rgba(255, 255, 255, 0.2)',
+            color: 'white',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '5px',
+            fontSize: '0.8rem'
+          }}
+        >
+          Test Celebration
         </button>
         
         <button 
@@ -693,7 +814,17 @@ const DailyLesson = () => {
       {/* Celebration Modal */}
       {showCelebration && celebrationData && (
         <div className="celebration-overlay">
-          <div className="celebration-modal">
+          <div 
+            className="celebration-modal"
+            ref={celebrationModalRef}
+            style={{
+              position: 'fixed',
+              top: '48px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1001
+            }}
+          >
             {/* Confetti Animation */}
             <div className="confetti-container">
               {[...Array(50)].map((_, i) => (

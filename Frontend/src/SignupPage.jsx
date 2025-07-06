@@ -8,13 +8,13 @@ import { MdPersonOutline, MdEmail, MdLockOutline, MdVisibility, MdVisibilityOff 
 
 const SignupPage = () => {
   const navigate = useNavigate();
+  const MAX_AYATS = 6236;
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: '',
     username: '',
     dailyAyats: '3', // Default: 3 ayats
-    learningMode: 'read', // 'read' or 'memorize'
     preferredLanguage: 'english',
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
   });
@@ -49,6 +49,13 @@ const SignupPage = () => {
       return;
     }
 
+    const dailyAyatsNum = parseInt(formData.dailyAyats, 10);
+    if (isNaN(dailyAyatsNum) || dailyAyatsNum < 1 || dailyAyatsNum > MAX_AYATS) {
+      setError(`Daily ayats must be between 1 and ${MAX_AYATS}`);
+      setLoading(false);
+      return;
+    }
+
     try {
       // Create user account
       const userCredential = await createUserWithEmailAndPassword(
@@ -63,8 +70,7 @@ const SignupPage = () => {
         uid: user.uid,
         email: formData.email,
         username: formData.username,
-        dailyAyats: parseInt(formData.dailyAyats),
-        learningMode: formData.learningMode,
+        dailyAyats: dailyAyatsNum,
         preferredLanguage: formData.preferredLanguage,
         timezone: formData.timezone,
         createdAt: new Date().toISOString(),
@@ -84,6 +90,7 @@ const SignupPage = () => {
       await setDoc(doc(db, "users", user.uid), userProfile);
 
       console.log("Signup successful!", user);
+      localStorage.setItem('quranQuestMode', 'read');
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
@@ -207,34 +214,6 @@ const SignupPage = () => {
             <h3>Learning Goals</h3>
             
             <div className="form-group">
-              <label htmlFor="learningMode">Learning Mode</label>
-              <div className="radio-group">
-                <label className="radio-container">
-                  <input
-                    type="radio"
-                    name="learningMode"
-                    value="read"
-                    checked={formData.learningMode === 'read'}
-                    onChange={handleInputChange}
-                  />
-                  <span className="radio-checkmark"></span>
-                  Read
-                </label>
-                <label className="radio-container">
-                  <input
-                    type="radio"
-                    name="learningMode"
-                    value="memorize"
-                    checked={formData.learningMode === 'memorize'}
-                    onChange={handleInputChange}
-                  />
-                  <span className="radio-checkmark"></span>
-                  Memorize
-                </label>
-              </div>
-            </div>
-
-            <div className="form-group">
               <label htmlFor="dailyAyats">Daily Ayats</label>
               <div className="input-wrapper">
                 <input
@@ -244,8 +223,9 @@ const SignupPage = () => {
                   value={formData.dailyAyats}
                   onChange={handleInputChange}
                   min="1"
-                  max="10"
+                  max={MAX_AYATS}
                   className="form-input"
+                  required
                 />
                 <span className="goal-unit">
                   ayats per day

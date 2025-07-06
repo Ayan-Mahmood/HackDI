@@ -16,10 +16,12 @@ const UserProfile = () => {
   const [resetConfirm, setResetConfirm] = useState(false);
   const [showAudioSettings, setShowAudioSettings] = useState(false);
 
+  const MAX_AYATS = 6236;
+
   const [formData, setFormData] = useState({
     username: '',
     dailyAyats: '3',
-    learningMode: 'read',
+    dailyMemorizationAyats: '',
     preferredLanguage: 'english'
   });
 
@@ -66,7 +68,7 @@ const UserProfile = () => {
         setFormData({
           username: data.username || '',
           dailyAyats: data.dailyAyats?.toString() || '3',
-          learningMode: data.learningMode || 'read',
+          dailyMemorizationAyats: data.dailyMemorizationAyats?.toString() || '',
           preferredLanguage: data.preferredLanguage || 'english'
         });
       }
@@ -88,20 +90,29 @@ const UserProfile = () => {
 
   const handleSave = async () => {
     if (!user) return;
-    
     setSaving(true);
     setError('');
     setSuccess('');
-
+    const dailyAyatsNum = parseInt(formData.dailyAyats, 10);
+    const dailyMemAyatsNum = formData.dailyMemorizationAyats ? parseInt(formData.dailyMemorizationAyats, 10) : null;
+    if (isNaN(dailyAyatsNum) || dailyAyatsNum < 1 || dailyAyatsNum > MAX_AYATS) {
+      setError(`Reading goal must be between 1 and ${MAX_AYATS}`);
+      setSaving(false);
+      return;
+    }
+    if (formData.dailyMemorizationAyats && (isNaN(dailyMemAyatsNum) || dailyMemAyatsNum < 1 || dailyMemAyatsNum > MAX_AYATS)) {
+      setError(`Memorization goal must be between 1 and ${MAX_AYATS}`);
+      setSaving(false);
+      return;
+    }
     try {
       await updateDoc(doc(db, "users", user.uid), {
         username: formData.username,
-        dailyAyats: parseInt(formData.dailyAyats),
-        learningMode: formData.learningMode,
+        dailyAyats: dailyAyatsNum,
+        dailyMemorizationAyats: dailyMemAyatsNum,
         preferredLanguage: formData.preferredLanguage,
         lastUpdated: new Date().toISOString()
       });
-
       setSuccess('Profile updated successfully!');
       await loadUserData(user.uid); // Reload data
     } catch (err) {
@@ -144,7 +155,7 @@ const UserProfile = () => {
         username: userData?.username || '',
         email: userData?.email || user.email,
         dailyAyats: userData?.dailyAyats || 3,
-        learningMode: userData?.learningMode || 'read',
+        dailyMemorizationAyats: userData?.dailyMemorizationAyats || '',
         preferredLanguage: userData?.preferredLanguage || 'english',
         timezone: userData?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
         createdAt: userData?.createdAt || new Date().toISOString(),
@@ -374,7 +385,7 @@ const UserProfile = () => {
             <h3>Learning Goals</h3>
             
             <div className="form-group">
-              <label htmlFor="dailyAyats">Daily Ayats</label>
+              <label htmlFor="dailyAyats">Reading Goal</label>
               <div className="input-wrapper">
                 <input
                   type="number"
@@ -383,45 +394,31 @@ const UserProfile = () => {
                   value={formData.dailyAyats}
                   onChange={handleInputChange}
                   min="1"
-                  max="50"
+                  max={MAX_AYATS}
                   className="form-input"
+                  required
                 />
                 <span className="goal-unit">ayats per day</span>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="learningMode">Learning Mode</label>
-              <div className="radio-group">
-                <label className="radio-container">
-                  <input
-                    type="radio"
-                    name="learningMode"
-                    value="read"
-                    checked={formData.learningMode === 'read'}
-                    onChange={handleInputChange}
-                  />
-                  <span className="radio-checkmark"></span>
-                  Read & Understand
-                </label>
-                <label className="radio-container">
-                  <input
-                    type="radio"
-                    name="learningMode"
-                    value="memorize"
-                    checked={formData.learningMode === 'memorize'}
-                    onChange={handleInputChange}
-                  />
-                  <span className="radio-checkmark"></span>
-                  Memorize
-                </label>
+              <label htmlFor="dailyMemorizationAyats">Memorization Goal</label>
+              <div className="input-wrapper">
+                <input
+                  type="number"
+                  id="dailyMemorizationAyats"
+                  name="dailyMemorizationAyats"
+                  value={formData.dailyMemorizationAyats}
+                  onChange={handleInputChange}
+                  min="1"
+                  max={MAX_AYATS}
+                  className="form-input"
+                  placeholder="Set when you start memorizing"
+                />
+                <span className="goal-unit">ayats per day</span>
               </div>
-              <small className="form-help">
-                {formData.learningMode === 'memorize' 
-                  ? 'You\'ll need to complete each verse 3 times before marking as complete'
-                  : 'You can mark verses as complete after reading them once'
-                }
-              </small>
+              <small className="form-help">Set your memorization goal when you start memorizing</small>
             </div>
           </div>
 

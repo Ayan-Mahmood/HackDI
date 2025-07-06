@@ -372,9 +372,6 @@ const Friends = () => {
                     <p>{friend.email}</p>
                     <div className="friend-stats">
                       <span className="streak-badge">🔥 {friend.streak} day streak</span>
-                      <span className="last-active">
-                        {isOnline(friend.lastActive) ? 'Online' : `Last active: ${formatLastActive(friend.lastActive)}`}
-                      </span>
                     </div>
                   </div>
                   <button 

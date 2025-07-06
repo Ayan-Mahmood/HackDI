@@ -6,6 +6,54 @@ import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "fireb
 import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
+const MAX_AYATS = 6236;
+
+const MemorizationGoalModal = ({ onSave, onClose, theme }) => {
+  const [value, setValue] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const num = parseInt(value, 10);
+    if (isNaN(num) || num < 1) {
+      setError('Goal must be at least 1.');
+      return;
+    }
+    if (num > MAX_AYATS) {
+      setError(`Goal cannot exceed ${MAX_AYATS}.`);
+      return;
+    }
+    setError('');
+    onSave(num);
+  };
+
+  return (
+    <div className={`memorization-goal-modal-overlay ${theme}`}>
+      <div className="memorization-goal-modal">
+        <h2>Set Your Memorization Goal</h2>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="memorization-goal-input">How many ayats do you want to memorize daily?</label>
+          <input
+            id="memorization-goal-input"
+            type="number"
+            min="1"
+            max={MAX_AYATS}
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            className="memorization-goal-input"
+            autoFocus
+          />
+          {error && <div className="goal-error">{error}</div>}
+          <div className="modal-actions">
+            <button type="button" onClick={onClose} className="cancel-button">Cancel</button>
+            <button type="submit" className="save-button" disabled={!value}>Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
@@ -16,11 +64,15 @@ const Dashboard = () => {
   const [friendRequestsCount, setFriendRequestsCount] = useState(0);
   const [showStreakResetNotification, setShowStreakResetNotification] = useState(false);
   const [streakResetMessage, setStreakResetMessage] = useState('');
-  const [currentMode, setCurrentMode] = useState('read'); // 'read' or 'memorize'
+  const [currentMode, setCurrentMode] = useState(() => {
+    return localStorage.getItem('quranQuestMode') || 'read';
+  });
   const [modeCompletedToday, setModeCompletedToday] = useState({
     read: false,
     memorize: false
   });
+  const [showMemGoalModal, setShowMemGoalModal] = useState(false);
+  const [pendingModeSwitch, setPendingModeSwitch] = useState(false);
 
   // Function to check and reset streak based on missed days
   const checkAndResetStreak = (userData) => {
@@ -61,7 +113,16 @@ const Dashboard = () => {
   };
 
   const handleModeToggle = () => {
-    setCurrentMode(prevMode => prevMode === 'read' ? 'memorize' : 'read');
+    if (currentMode === 'read' && userProgress && (!userProgress.dailyMemorizationAyats || userProgress.dailyMemorizationAyats < 1)) {
+      setShowMemGoalModal(true);
+      setPendingModeSwitch(true);
+      return;
+    }
+    setCurrentMode(prevMode => {
+      const newMode = prevMode === 'read' ? 'memorize' : 'read';
+      localStorage.setItem('quranQuestMode', newMode);
+      return newMode;
+    });
   };
 
   const getModeTheme = () => {
@@ -115,6 +176,18 @@ const Dashboard = () => {
     }
   };
 
+  const handleSaveMemGoal = async (goal) => {
+    if (!userData) return;
+    setShowMemGoalModal(false);
+    await updateDoc(doc(db, 'users', userData.uid), { dailyMemorizationAyats: goal });
+    setUserProgress(prev => ({ ...prev, dailyMemorizationAyats: goal }));
+    if (pendingModeSwitch) {
+      setCurrentMode('memorize');
+      localStorage.setItem('quranQuestMode', 'memorize');
+      setPendingModeSwitch(false);
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -161,6 +234,7 @@ const Dashboard = () => {
         // Fetch surah list
         await fetchSurahList();
         await fetchFriendRequests(currentUser.uid);
+        localStorage.setItem('quranQuestMode', 'read');
       } else {
         navigate('/login');
       }
@@ -345,6 +419,7 @@ const Dashboard = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      localStorage.removeItem('quranQuestMode');
       navigate('/login');
     } catch (error) {
       console.error('Error signing out:', error);
@@ -550,6 +625,14 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {showMemGoalModal && (
+        <MemorizationGoalModal
+          onSave={handleSaveMemGoal}
+          onClose={() => { setShowMemGoalModal(false); setPendingModeSwitch(false); }}
+          theme={getModeTheme()}
+        />
+      )}
     </div>
   );
 };
