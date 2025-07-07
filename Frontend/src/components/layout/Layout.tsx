@@ -8,7 +8,8 @@ import {
   Map, 
   LogOut,
   Menu,
-  X
+  X,
+  GraduationCap
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import Button from '../ui/Button';
@@ -17,6 +18,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Daily Lesson', href: '/daily-lesson', icon: BookOpen },
   { name: 'Roadmap', href: '/roadmap', icon: Map },
+  { name: 'Quranic Learning', href: '/quranic-learning', icon: GraduationCap },
   { name: 'Community', href: '/community', icon: Users },
   { name: 'Friends', href: '/friends', icon: Users },
   { name: 'Profile', href: '/profile', icon: User },

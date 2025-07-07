@@ -777,32 +777,6 @@ const DailyLesson = () => {
           )}
         </button>
         
-        {/* Temporary test button - remove after debugging */}
-        <button 
-          onClick={() => {
-            console.log('Test celebration modal');
-            setCelebrationData({
-              streak: 5,
-              versesCompleted: 3,
-              achievement: 'Test Achievement',
-              message: 'Test message',
-              totalVerses: 15,
-              modeCompleted: currentMode
-            });
-            setShowCelebration(true);
-          }}
-          style={{
-            padding: '0.5rem 1rem',
-            background: 'rgba(255, 255, 255, 0.2)',
-            color: 'white',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            borderRadius: '5px',
-            fontSize: '0.8rem'
-          }}
-        >
-          Test Celebration
-        </button>
-        
         <button 
           onClick={() => navigate('/dashboard')}
           className="back-button"

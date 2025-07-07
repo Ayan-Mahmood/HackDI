@@ -7,7 +7,8 @@ import {
   Zap,
   TrendingUp,
   Calendar,
-  Award
+  Award,
+  GraduationCap
 } from 'lucide-react';
 
 import { useAuthStore } from '../../stores/authStore';
@@ -154,6 +155,60 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Feature Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Track Progress */}
+        <Link to="/roadmap" className="group">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer">
+            <div className="flex items-center mb-4">
+              <div className="p-3 rounded-lg bg-blue-100 dark:bg-blue-900">
+                <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="ml-3 text-lg font-semibold text-gray-900 dark:text-white">
+                Track Progress
+              </h3>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400">
+              Visualize your Quran reading journey with interactive progress tracking
+            </p>
+          </div>
+        </Link>
+
+        {/* Community */}
+        <Link to="/community" className="group">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer">
+            <div className="flex items-center mb-4">
+              <div className="p-3 rounded-lg bg-green-100 dark:bg-green-900">
+                <BookOpen className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+              <h3 className="ml-3 text-lg font-semibold text-gray-900 dark:text-white">
+                Community
+              </h3>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400">
+              Connect with fellow learners and share your insights
+            </p>
+          </div>
+        </Link>
+
+        {/* Quranic Learning */}
+        <Link to="/quranic-learning" className="group">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer">
+            <div className="flex items-center mb-4">
+              <div className="p-3 rounded-lg bg-purple-100 dark:bg-purple-900">
+                <GraduationCap className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              </div>
+              <h3 className="ml-3 text-lg font-semibold text-gray-900 dark:text-white">
+                Quranic Learning
+              </h3>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400">
+              Master the 500 most frequent Arabic words in the Quran
+            </p>
+          </div>
+        </Link>
       </div>
     </div>
   );

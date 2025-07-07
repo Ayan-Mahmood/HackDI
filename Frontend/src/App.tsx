@@ -8,6 +8,7 @@ import { LoginForm } from './components/auth/LoginForm';
 import Dashboard from './components/dashboard/Dashboard';
 import DailyLesson from './components/quran/DailyLesson';
 import QuranRoadmap from './components/quran/QuranRoadmap';
+import QuranicLearning from './QuranicLearning';
 import Community from './components/social/Community';
 import Friends from './components/social/Friends';
 import UserProfile from './components/user/UserProfile';
@@ -105,6 +106,7 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="daily-lesson" element={<DailyLesson />} />
               <Route path="roadmap" element={<QuranRoadmap />} />
+              <Route path="quranic-learning" element={<QuranicLearning />} />
               <Route path="community" element={<Community />} />
               <Route path="friends" element={<Friends />} />
               <Route path="profile" element={<UserProfile />} />

@@ -571,6 +571,14 @@ const Dashboard = () => {
               View Community
             </Link>
           </div>
+          <div className="feature-card">
+            <div className="feature-icon">🎓</div>
+            <h3>Quranic Learning</h3>
+            <p>Master the 500 most frequent Arabic words in the Quran</p>
+            <Link to="/quranic-learning" className="feature-button">
+              Start Learning
+            </Link>
+          </div>
         </div>
 
         {/* Quran Roadmap Section */}
