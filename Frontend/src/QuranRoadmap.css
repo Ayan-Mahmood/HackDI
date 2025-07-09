@@ -57,109 +57,147 @@
   letter-spacing: 0.5px;
 }
 
-.surah-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 0.7rem;
+.surah-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   margin-bottom: 2rem;
   max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
 }
 
-.surah-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
-  padding: 0.8rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.surah-item {
+  background: #FFFBEA;
+  border: 2px solid #FBBF24;
+  border-radius: 18px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 24px rgba(251, 191, 36, 0.10);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  min-height: 120px;
   position: relative;
   overflow: hidden;
-  font-size: 0.95rem;
-  min-height: unset;
+  width: 100%;
 }
 
-.surah-card:hover:not(.locked) {
+.surah-item:hover:not(.locked) {
   transform: translateY(-5px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-.surah-card.completed {
+.surah-item.completed {
   border-color: #fbbf24;
-  background: rgba(251,191,36,0.1);
+  background: #FFFBEA;
 }
 
-.surah-card.current {
+.surah-item.current {
   border-color: #fbbf24;
   background: rgba(251,191,36,0.1);
   animation: pulse 2s infinite;
 }
 
-.surah-card.locked {
+.surah-item.locked {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.surah-card.locked:hover {
+.surah-item.locked:hover {
   transform: none;
   box-shadow: none;
 }
 
-.surah-card .surah-number {
-  width: 32px;
-  height: 32px;
-  font-size: 0.95rem;
+.surah-item .surah-number {
+  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #222;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.18);
+  flex-shrink: 0;
+  margin-right: 2rem;
 }
 
 .surah-info {
-  margin-bottom: 0.5rem;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  height: 100%;
+  text-align: center;
 }
 
 .surah-name {
-  font-size: 1.05rem;
-  margin-bottom: 0.2rem;
+  color: #222;
+  font-weight: 800;
+  font-size: 2rem;
+  margin: 0 0 0.2rem 0;
+  letter-spacing: 0.01em;
 }
 
 .surah-english {
-  font-size: 0.85rem;
+  font-size: 1.2rem;
+  color: #888;
   margin-bottom: 0.2rem;
+  font-weight: 500;
 }
 
 .surah-ayahs {
-  font-size: 0.75rem;
+  font-size: 1.1rem;
+  color: #bbb;
+  font-weight: 500;
 }
 
 .progress-bar {
-  width: 100%;
-  height: 10px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 5px;
+  width: 90%;
+  height: 40px;
+  background: #F3F4F6;
+  border-radius: 20px;
   overflow: hidden;
-  margin-bottom: 0.2rem;
-  position: relative;
+  position: absolute;
+  left: 5%;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 4px #fbbf2422;
+  margin-bottom: 0;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
-  border-radius: 5px;
+  background: linear-gradient(90deg, #FBBF24 0%, #39836e 100%);
+  border-radius: 16px;
   transition: width 0.3s ease;
-  box-shadow: 0 0 6px #fbbf24cc;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   position: relative;
+  box-shadow: 0 0 6px #fbbf24cc;
 }
 
 .progress-label {
-  font-size: 0.7rem;
-  color: #fff;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem;
   font-weight: 700;
-  margin-right: 6px;
-  text-shadow: 0 1px 4px #24664a;
+  color: #222;
+  text-shadow: none;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
 }
 
 /* Remove status-indicator styles */
@@ -235,13 +273,20 @@
     min-width: 100px;
   }
   
-  .surah-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  .surah-list {
     gap: 0.5rem;
   }
   
-  .surah-card {
-    padding: 0.6rem;
+  .surah-item {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .progress-bar {
+    width: 100%;
+    height: 16px;
   }
 }
 
@@ -256,8 +301,8 @@
     gap: 1rem;
   }
   
-  .surah-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  .surah-list {
+    gap: 0.3rem;
   }
   
   .stat-number {

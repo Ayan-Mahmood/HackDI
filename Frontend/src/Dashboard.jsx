@@ -5,6 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
+import QuranRoadmap from './QuranRoadmap';
 
 const MAX_AYATS = 6236;
 
@@ -234,7 +235,6 @@ const Dashboard = () => {
         // Fetch surah list
         await fetchSurahList();
         await fetchFriendRequests(currentUser.uid);
-        localStorage.setItem('quranQuestMode', 'read');
       } else {
         navigate('/login');
       }
@@ -426,41 +426,15 @@ const Dashboard = () => {
     }
   };
 
-  // Filter surahs based on search term
-  const filteredSurahs = surahs.filter(surah => 
-    surah.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    surah.englishName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    surah.number.toString().includes(searchTerm)
-  );
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #39836e 0%, #24664a 100%)',
-        color: 'white'
-      }}>
-        <p style={{ 
-          fontSize: '1.2rem', 
-          margin: '0 0 20px 0',
-          color: 'white',
-          animation: 'none',
-          transform: 'none'
-        }}>
-          Loading database...
-        </p>
-        <div style={{
-          width: '30px',
-          height: '30px',
-          border: '3px solid rgba(255, 255, 255, 0.3)',
-          borderTop: '3px solid white',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }}></div>
+      <div className="loading-container">
+        <p className="loading-text">Loading...</p>
+        <div className="loading-spinner"></div>
       </div>
     );
   }
@@ -582,56 +556,15 @@ const Dashboard = () => {
         </div>
 
         {/* Quran Roadmap Section */}
-        <div className="roadmap-section">
-          <h2>Complete Quran</h2>
-          <p>Click on any surah to read its verses</p>
-          
-          {/* Search Bar */}
-          <div className="surah-search-container">
-            <input
-              type="text"
-              placeholder="Search surahs by name, English name, or number..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="surah-search-input"
-            />
-            <div className="search-results-count">
-              {filteredSurahs.length} of {surahs.length} surahs
-            </div>
-          </div>
-          
-          <div className="surah-list">
-            {filteredSurahs.map((surah) => {
-              const status = getSurahStatus(surah.number);
-              const progress = getSurahProgress(surah.number, surah.numberOfAyahs);
-              
-              return (
-                <div
-                  key={surah.number}
-                  className={`surah-item ${status}`}
-                  onClick={() => handleSurahClick(surah.number)}
-                >
-                  <div className="surah-number">{surah.number}</div>
-                  <div className="surah-info">
-                    <h3 className="surah-name">{surah.name}</h3>
-                    <p className="surah-english">{surah.englishName}</p>
-                    <p className="surah-ayahs">{surah.numberOfAyahs} verses</p>
-                  </div>
-                  <div className={`progress-bar${progress === 100 ? ' completed' : ''}`}>
-                    <div 
-                      className="progress-fill"
-                      style={{ width: `${progress}%` }}
-                    >
-                      {progress > 0 && (
-                        <span className="progress-label">{progress}%{progress === 100 ? ' (Completed)' : ''}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <QuranRoadmap
+          surahs={surahs}
+          userProgress={userProgress}
+          getSurahStatus={getSurahStatus}
+          getSurahProgress={getSurahProgress}
+          handleSurahClick={handleSurahClick}
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+        />
       </div>
 
       {showMemGoalModal && (

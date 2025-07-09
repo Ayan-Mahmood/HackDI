@@ -2,30 +2,58 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './QuranicLearning.css';
 
+function getRandomOptions(words, correctWord, count = 4) {
+  // Get 3 random unique distractors that are not the correct word
+  const distractors = [];
+  const used = new Set([correctWord.english]);
+  while (distractors.length < count - 1) {
+    const idx = Math.floor(Math.random() * words.length);
+    const option = words[idx];
+    if (!used.has(option.english)) {
+      distractors.push(option.english);
+      used.add(option.english);
+    }
+  }
+  // Insert the correct answer at a random position
+  const options = [...distractors];
+  const correctIdx = Math.floor(Math.random() * count);
+  options.splice(correctIdx, 0, correctWord.english);
+  return options;
+}
+
 const QuranicLearning = () => {
-  console.log('QuranicLearning component rendered');
-  
   const [words, setWords] = useState([]);
   const [lessons, setLessons] = useState([]);
   const [currentLesson, setCurrentLesson] = useState(0);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false);
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(true);
   const [lessonProgress, setLessonProgress] = useState({});
+  const [reviewList, setReviewList] = useState([]);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const [options, setOptions] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   useEffect(() => {
-    console.log('QuranicLearning useEffect triggered');
     loadWords();
   }, []);
 
+  useEffect(() => {
+    // When a new word is shown, generate new options
+    if (currentLesson > 0 && lessons.length > 0) {
+      const word = lessons[currentLesson - 1].words[currentWordIndex];
+      setOptions(getRandomOptions(words, word));
+      setSelectedOption(null);
+      setShowFeedback(false);
+      setFeedback('');
+    }
+  }, [currentWordIndex, currentLesson, lessons, words]);
+
   const loadWords = async () => {
-    console.log('Loading words...');
     try {
       const response = await fetch('/top_500_quranic_words.json');
-      console.log('Fetch response:', response);
       const data = await response.json();
-      console.log('Loaded data:', data.length, 'words');
       setWords(data);
       // Create lessons (10 words per lesson)
       const lessonData = [];
@@ -41,9 +69,7 @@ const QuranicLearning = () => {
       }
       setLessons(lessonData);
       setLoading(false);
-      console.log('Lessons created:', lessonData.length);
     } catch (error) {
-      console.error('Error loading words:', error);
       setLoading(false);
     }
   };
@@ -51,14 +77,27 @@ const QuranicLearning = () => {
   const startLesson = (lessonId) => {
     setCurrentLesson(lessonId);
     setCurrentWordIndex(0);
-    setShowAnswer(false);
     setScore(0);
+    setReviewList([]);
+    setShowFeedback(false);
+    setFeedback('');
   };
 
   const nextWord = () => {
+    setShowFeedback(false);
+    setFeedback('');
+    setSelectedOption(null);
     if (currentWordIndex < lessons[currentLesson - 1].words.length - 1) {
       setCurrentWordIndex(currentWordIndex + 1);
-      setShowAnswer(false);
+    } else if (reviewList.length > 0) {
+      // If there are words to review, start them
+      setLessons(prev => {
+        const updated = [...prev];
+        updated[currentLesson - 1].words = reviewList;
+        return updated;
+      });
+      setCurrentWordIndex(0);
+      setReviewList([]);
     } else {
       completeLesson();
     }
@@ -79,6 +118,25 @@ const QuranicLearning = () => {
   };
 
   const currentWord = lessons[currentLesson - 1]?.words[currentWordIndex];
+
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
+    if (option === currentWord.english) {
+      setScore(score + 1);
+      setFeedback('Correct!');
+      setShowFeedback(true);
+      setTimeout(() => {
+        nextWord();
+      }, 900);
+    } else {
+      setFeedback('Incorrect!');
+      setShowFeedback(true);
+      setReviewList(prev => [...prev, currentWord]);
+      setTimeout(() => {
+        nextWord();
+      }, 900);
+    }
+  };
 
   if (loading) {
     return (
@@ -169,58 +227,25 @@ const QuranicLearning = () => {
       <div className="word-card">
         <div className="word-display">
           <div className="arabic-word">{currentWord?.arabic}</div>
-          <div className="word-info">
-            <span className="rank">Rank #{currentWord?.rank}</span>
-            <span className="frequency">Appears {currentWord?.frequency} times</span>
-          </div>
         </div>
-        {!showAnswer ? (
-          <div className="interaction-area">
-            <p className="instruction">What does this word mean?</p>
-            <button 
-              className="show-answer-btn"
-              onClick={() => setShowAnswer(true)}
-            >
-              Show Answer
-            </button>
-          </div>
-        ) : (
-          <div className="answer-area">
-            <div className="english-translation">
-              <h3>English:</h3>
-              <p>{currentWord?.english}</p>
-            </div>
-            <div className="word-context">
-              <h4>Example occurrences:</h4>
-              <div className="occurrences">
-                {currentWord?.occurrences.slice(0, 3).map((occ, index) => (
-                  <div key={index} className="occurrence">
-                    Surah {occ.surah}, Ayah {occ.ayah}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="action-buttons">
-              <button 
-                className="correct-btn"
-                onClick={() => {
-                  setScore(score + 1);
-                  nextWord();
-                }}
+        <div className="interaction-area">
+          <p className="instruction">What does this word mean?</p>
+          <div className="mcq-options">
+            {options.map((option, idx) => (
+              <button
+                key={idx}
+                className={`mcq-option-btn ${selectedOption === option ? (option === currentWord.english ? 'correct' : 'incorrect') : ''}`}
+                onClick={() => handleOptionClick(option)}
+                disabled={!!selectedOption}
               >
-                ✓ I knew this
+                {option}
               </button>
-              <button 
-                className="incorrect-btn"
-                onClick={() => {
-                  nextWord();
-                }}
-              >
-                ✗ Need to review
-              </button>
-            </div>
+            ))}
           </div>
-        )}
+          {showFeedback && (
+            <div className={`mcq-feedback ${feedback === 'Correct!' ? 'correct' : 'incorrect'}`}>{feedback}</div>
+          )}
+        </div>
       </div>
     </div>
   );
